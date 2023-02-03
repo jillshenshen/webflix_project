@@ -1,29 +1,75 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState ,useRef} from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import {IoPlayCircleSharp} from 'react-icons/io5'
-import {RiThumbUpFill,RiThumbDownFill} from 'react-icons/ri'
 import {BsCheck} from 'react-icons/bs'
 import {AiOutlinePlus} from 'react-icons/ai'
 import {BiChevronDown} from 'react-icons/bi'
 import { useDispatch,useSelector } from 'react-redux'
 import { getTrailer} from '../store/index.js'
+import { arrayUnion,doc,updateDoc } from 'firebase/firestore'
+import {db,app} from '../utils/firebase-config'
+import 'firebase/compat/auth'
 
-
-export default function Card({movieData,isLiked=false}) {
+export default function Card({movieData}) {
+  const [show, setShow] = useState(false);
   const [isHovered,setIsHovered]=useState(false)
   const navigate=useNavigate()
   const dispatch=useDispatch()
   const youtube_v=useSelector((state)=>state.netflix.trailer)
+
+  const [like,setLike]=useState(false)
+  const [saved,setSaved]=useState(false)
   
   useEffect(()=>{
     if(isHovered){
         dispatch(getTrailer(movieData.id))
     }   
- },[isHovered])
+  },[isHovered])
   
+ const timeoutRef = useRef(null);
+ useEffect(() => {
+   if (isHovered) {
+     timeoutRef.current = setTimeout(() => {
+       setShow(true);
+     }, 300);
+   } else {
+     clearTimeout(timeoutRef.current);
+     setShow(false);
+   }
+ }, [isHovered]);
+
+
+
+
+
+let email
+app.auth().onAuthStateChanged(function(user) {
+  //這裡會印出User的資訊
+  email=user.email
+})
+
+ const saveShow = async() => {
+      setLike(!like) 
+      const movieID=doc(db,'users',email)
+       await updateDoc(movieID,{
+         savedShows:arrayUnion({
+          id:movieData.id,
+          name: movieData.name,
+          image:movieData.image,
+          genres:movieData.genres
+         })
+      }) 
+ }
+
+
+
+
+ 
+
+
 
   return (
     <Container
@@ -33,21 +79,25 @@ export default function Card({movieData,isLiked=false}) {
       <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
       />
       {
-        isHovered&&(
+        show &&(
             <div className='hover'>
                <div className="image-video-container">
                <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
                onClick={()=>navigate('/player')}
                 /> 
                 <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;mute;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-                {/* <video src={`https://www.youtube.com/watch?v=${youtube_v}`}   autoPlay loop muted onClick={()=>navigate('/player')}/> */}
+             
                </div>
                <div className="info-container flex column">
                    <h3 className='name' onClick={()=>navigate('/player')}>{movieData.name}</h3>
                    <div className="icons flex j-between">
                       <div className="controls flex">
                          <IoPlayCircleSharp title="play" onClick={()=>navigate('/player')}/>
-                         <AiOutlinePlus title="Add to my list"/>
+                         <p onClick={saveShow}>
+                         {like?<BsCheck/>:  <AiOutlinePlus title="Add to my list" />}
+                         </p>
+                       
+                       
                       </div>
 
                       <div className="info">
@@ -88,12 +138,16 @@ const Container=styled.div`
     height:max-content;
     width:20rem;
     position:absolute;
+    ${'' /* top:-18vh;
+    left:0; */}
     top:-18vh;
-    left:0;
+    left:-3vw;
     border-radius:0.3rem;
     box-shadow:rgba(0,0,0,0.75) 0px 3px 10px;
     background-color:#181818;
-    transition:0.2s ease-in-out;
+    transition:2s ease-in-out;
+    
+ 
 
     .image-video-container{
         position:relative;

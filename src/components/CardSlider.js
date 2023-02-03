@@ -12,21 +12,22 @@ export default function CardSlider({data,title}) {
 
    const handleDirection=(direction)=>{
   
-      const distance=listRef.current.getBoundingClientRect().x-70;
-      console.log(distance)
+      const distance=listRef.current.getBoundingClientRect().x-66;
+      
       if(direction==="left"&&sliderPosition>0){
-          listRef.current.style.transform=`translateX(${230+distance}px)`
+          listRef.current.style.transform=`translateX(${1150+distance+32}px)`
           setSliderPosition(sliderPosition-1)
       }
 
-      if(direction==="right"&&sliderPosition<6){
-        listRef.current.style.transform=`translateX(${-230+distance}px)`
+      if(direction==="right"&&sliderPosition<5){
+        listRef.current.style.transform=`translateX(${-1150+distance}px)`
         setSliderPosition(sliderPosition+1)
     }
   
     
 
    } 
+  
    
   return (
     <Container 
@@ -67,6 +68,7 @@ const Container=styled.div`
   gap:1rem;
   position:relative;
   padding:2rem 0;
+  box-sizing:border-box;
 
   
 
@@ -78,7 +80,7 @@ const Container=styled.div`
         width:max-content;
         gap:1rem;
         transform:translateX(0px);
-        transition:0.3s ease-in-out;
+        transition:all 0.5s ease-in-out;
         margin-left:50px;
     }
     .slider-action{

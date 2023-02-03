@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Background from '../components/Background.js'
 import Header from '../components/Header.js'
-import { app } from '../utils/firebase-config.js'
+import { app,db } from '../utils/firebase-config.js'
+import { setDoc,doc } from "firebase/firestore";
 import 'firebase/compat/auth'
 
 
@@ -17,7 +18,11 @@ export default function Signup(){
   const handleSignIn=async()=>{
     try{
       const {email,password}=formValue
-      await app.auth().createUserWithEmailAndPassword(email,password)
+      await app.auth().createUserWithEmailAndPassword(email,password);
+            setDoc(doc(db,'users',email),{
+               savedShows:[]
+            })
+          
 
     }catch(err){
       console.log(err)
@@ -25,7 +30,8 @@ export default function Signup(){
   }
 
   app.auth().onAuthStateChanged(function(user) {
-   console.log(user);    //這裡會印出User的資訊
+   
+    //這裡會印出User的資訊
    if (user) {
       navigate("/")
      // User is signed in.
@@ -39,7 +45,7 @@ export default function Signup(){
       <Background/>
     
       <div className="content">
-      <Header />
+      <Header login />
       <div className="body flex column a-center j-center">
         <div className="text flex column">
            <h1>Unlimited movies, TV shows and more</h1>

@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState ,useRef,useEffect} from 'react';
 import styled from 'styled-components';
 import logo from '../assets/logo.png';
 import {FaPowerOff, FaSearch}from 'react-icons/fa'
+import {AiOutlineClose}from 'react-icons/ai' 
 import { app } from '../utils/firebase-config.js'
 import { Link } from 'react-router-dom';
 import 'firebase/compat/auth'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { getSearch } from '../store/index.js'
 
-export default function Navbar({isScrolled}) {
+
+export default function Navbar({isScrolled,setData,setIsData,data}) {
+  const dispatch=useDispatch();
   const navigate= useNavigate()
   const links=[
     {name:"Home",link:"/"},
@@ -18,6 +23,8 @@ export default function Navbar({isScrolled}) {
 
   app.auth().onAuthStateChanged(function(user) {
     //這裡會印出User的資訊
+
+ 
     if (!user) {
        navigate("/login")
       // User is signed in.
@@ -25,8 +32,37 @@ export default function Navbar({isScrolled}) {
    
   const [showSearch,setShowSearch]=useState(false) 
   const [inputHover,setInputHover]=useState(false) 
+  const inputRef = useRef(null);
   
+  useEffect(() => {
+    if(showSearch){
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 500)
+    }
+  }, [showSearch]);
 
+
+  const handleClick = () => {
+    setIsData(false);
+    setShowSearch(false);
+    setData("");
+    dispatch(getSearch("%$#"));
+    window.scrollTo({
+      top: 0,
+      behavior: 'auto',   
+    });
+  };
+
+  const handleClose=()=>{
+    setShowSearch(false);
+    setInputHover(false);
+    setData("")
+    dispatch(getSearch("%$#"));
+  }
+
+
+  
 
   return (
     <Container>
@@ -38,7 +74,9 @@ export default function Navbar({isScrolled}) {
               <ul className='links flex'>
              {links.map(({name,link})=>{
                 return(
-                  <li key={name}><Link to={link}>{name}</Link></li>
+                  <li key={name}><Link to={link}  onClick={e => {if(name === "Home"){  e.preventDefault();
+                  
+                    handleClick()} }}>{name}</Link></li>
                 )
 
              })}
@@ -52,21 +90,42 @@ export default function Navbar({isScrolled}) {
                   onBlur={()=>{
                     if(!inputHover){setShowSearch(false)}
                   }}
+             
                  >
                     <FaSearch/>
                  </button>
+
                  <input type="text" placeholder='search' 
+                  value={data} 
+                  ref={inputRef}
                   onMouseEnter={()=>setInputHover(true)}
-                  onMouseLeave={()=>setInputHover(false)}
                   onBlur={
-                    ()=>{setShowSearch(false);
-                         setInputHover(false);
+                    ()=>{
+                      if(data===''){
+                        setShowSearch(false);
+                        setInputHover(false);
+
+                      }
+                     
                     }}
 
+                    onChange={(event) => {
+                    setData(event.target.value);
+                    }}   
+                 
                  />
+                 <button className={`close ${data!=""?"show-close":""}`} 
+                 onClick={()=>{
+                  handleClose()
+                 }}
+                 >
+                 <AiOutlineClose/>
+                 </button>
+              
                </div>
                <button onClick={()=>app.auth().signOut()}><FaPowerOff/></button>
-           </div>           
+           </div>  
+   
         </nav>
     </Container>
   )
@@ -75,8 +134,10 @@ export default function Navbar({isScrolled}) {
 
 
 const Container=styled.div`
+  
   .scrolled{
-    background-color:black
+ 
+    background-color:black;
   }
   nav{
     position:sticky;
@@ -152,14 +213,20 @@ const Container=styled.div`
         .show-search{
             border:1px solid white;
             background-color:rgba(0,0,0,0.5);
-            input{
+            input {
               width:100%;
               opacity:1;
               visibility:visible;
               padding:0.3rem;
-              
             }
+
           }
+        .close{
+          visibility:hidden;
+        } 
+        .show-close{
+          visibility:visible;
+        } 
       }
   }
 

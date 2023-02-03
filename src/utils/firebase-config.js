@@ -1,14 +1,17 @@
 import firebase from 'firebase/compat/app';
+import {getFirestore} from 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCswg-lxt4MTs8KfngqNtT5xpHOH8u0C3Q",
-  authDomain: "react-netflix-1d0ee.firebaseapp.com",
-  projectId: "react-netflix-1d0ee",
-  storageBucket: "react-netflix-1d0ee.appspot.com",
-  messagingSenderId: "615310670677",
-  appId: "1:615310670677:web:5e67200d2675961e7c8ddc",
-  measurementId: "G-D7VTXJMV7W"
+  apiKey: "AIzaSyD1C6u4SfCgN1Xw5Oggy6iAkZB9eMiO1YQ",
+  authDomain: "webflix-project.firebaseapp.com",
+  projectId: "webflix-project",
+  storageBucket: "webflix-project.appspot.com",
+  messagingSenderId: "868854807727",
+  appId: "1:868854807727:web:0c2b656bcdf18b7bbbe85a",
+  measurementId: "G-NQ8JTSTHKY"
 };
 
 // Initialize Firebase
 export const app=firebase.initializeApp(firebaseConfig)
+
+export const db=getFirestore(app)

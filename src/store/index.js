@@ -7,8 +7,42 @@ const initialState={
     movies:[],
     genresLoaded:false,
     genres:[],
-    trailer:""
+    trailer:"",
+    search:[],
+    
 }
+
+
+export const getSearch=createAsyncThunk('netflix/search',async(input,thunkApi)=>{
+    const {netflix:{genres}}=thunkApi.getState();
+    const {data:{results}}=await axios.get(`${TMDB_BASE_URL}/search/multi?api_key=${API_KEY}&query=${input}`)
+    const searchArray=[]
+    results.forEach((result)=>{
+        const movieGenres=[];
+        result.genre_ids.forEach((genre)=>{
+        const name=genres.find(({id})=>id===genre)
+         if(name) movieGenres.push(name.name);
+      }) 
+
+
+       if(result.backdrop_path){
+          searchArray.push({
+              id:result.id,
+              name:result.original_name?result.original_name:result.original_title,
+              image:result.backdrop_path,
+              genres:movieGenres.slice(0,3)
+  
+          })
+          
+       }
+  
+    })
+    
+    return searchArray
+  
+  })
+
+
 
 export const getTrailer=createAsyncThunk('netflix/trailer',async(id)=>{
 
@@ -88,6 +122,10 @@ const NetflixSlice=createSlice({
         });
         builder.addCase(getTrailer.fulfilled,(state,action)=>{
             state.trailer=action.payload;
+           
+        });
+        builder.addCase(getSearch.fulfilled,(state,action)=>{
+            state.search=action.payload;
            
         });
 

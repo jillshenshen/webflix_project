@@ -8,16 +8,21 @@ import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { fetchMovies, getGenres ,getTrailer} from '../store/index.js'
+import { fetchMovies, getGenres} from '../store/index.js'
 import Slider from '../components/Slider.js'
+import Search from '../components/Search.js'
 import { RiContactsBookUploadLine } from 'react-icons/ri'
 
 export default function Netflix() {
   const [isScrolled,setIsScrolled]=useState(false)
   const navigate=useNavigate()  
   const dispatch=useDispatch()
+
   const genresLoaded=useSelector((state)=>state.netflix.genresLoaded)
   const movies=useSelector((state)=>state.netflix.movies)
+
+  const [data, setData] = useState("");
+  const [isData,setIsData]=useState(false)
  
 
   useEffect(()=>{
@@ -25,23 +30,44 @@ export default function Netflix() {
   },[])
 
 
+  
 
   useEffect(()=>{
-    if(genresLoaded) dispatch(fetchMovies({type:"all"}))
-  })
+     if(genresLoaded)dispatch(fetchMovies({type:"all"}))
+  },[genresLoaded])
 
   window.onscroll=()=>{
     setIsScrolled(window.pageYOffset===0?false:true)
     return()=>(window.onscroll=null);
   }
 
-  
+
+
+  const handleSubmitData = () => {
+    console.log(data)
+    setIsData(true) 
+  };
+   
+  useEffect(()=>{
+    if(data!=""){
+      handleSubmitData()
+    }else{
+      setIsData(false)
+    }     
+   },[data])
+
+ 
 
 
   return (
     <Container>
-        <Navbar isScrolled={isScrolled}/> 
-        <div className="hero">
+        <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}/> 
+        
+         {
+          isData?
+          <Search data={data}/>:(
+          <>         
+          <div className="hero">
          <img src={home} alt="background" 
           className='background-image'
          />
@@ -55,13 +81,19 @@ export default function Netflix() {
           </div>
          </div>
         </div>
-        <Slider movies={movies}/>
+        <Slider movies={movies}/> 
+        </>)
+         }
+      
+      
+      
     </Container>
   )
 }
 
 
 const Container=styled.div`
+
    background-color:black;
    .hero{
     position:relative;
