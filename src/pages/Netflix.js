@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState ,useContext} from 'react'
 import Navbar from  '../components/Navbar.js'
 import home from '../assets/home.jpg'
 import peaky from '../assets/peaky.png'
@@ -12,17 +12,20 @@ import { fetchMovies, getGenres} from '../store/index.js'
 import Slider from '../components/Slider.js'
 import Search from '../components/Search.js'
 import { RiContactsBookUploadLine } from 'react-icons/ri'
+import { AppContext } from "../App.js";
 
 export default function Netflix() {
-  const [isScrolled,setIsScrolled]=useState(false)
+
+  
+  const { data, setData, isData, setIsData,setIsScrolled,isScrolled } = useContext(AppContext);
+
   const navigate=useNavigate()  
   const dispatch=useDispatch()
 
   const genresLoaded=useSelector((state)=>state.netflix.genresLoaded)
   const movies=useSelector((state)=>state.netflix.movies)
 
-  const [data, setData] = useState("");
-  const [isData,setIsData]=useState(false)
+
  
 
   useEffect(()=>{

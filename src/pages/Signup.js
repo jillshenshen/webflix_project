@@ -20,7 +20,11 @@ export default function Signup(){
       const {email,password}=formValue
       await app.auth().createUserWithEmailAndPassword(email,password);
             setDoc(doc(db,'users',email),{
-               savedShows:[]
+               savedShows:[],
+               toWatch:[],
+               watching:[],
+               watched:[],
+               drop:[]
             })
           
 

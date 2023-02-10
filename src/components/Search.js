@@ -1,13 +1,19 @@
 import React from 'react'
-import { useEffect } from 'react'
+import { useEffect,useState } from 'react'
 import { getSearch } from '../store/index.js'
 import { useDispatch,useSelector} from 'react-redux'
 import styled from 'styled-components'
+import SearchItem from './SearchItem.js'
+import Card from './Card.js'
+
 
 export default function Search({data}) {
+  const [show, setShow] = useState(false);
+  const [isHovered,setIsHovered]=useState(false)
   const dispatch=useDispatch()
   const searchArray=useSelector((state)=>state.netflix.search)
   
+
 
   useEffect(()=>{
     if(data)dispatch(getSearch(data))
@@ -18,12 +24,19 @@ export default function Search({data}) {
   return (
     <Container>
     
-    {searchArray.map((item)=>{
+    {searchArray.map((item,index)=>{
        return (
-       <div className='img-div'>
-       <img src={`https://image.tmdb.org/t/p/original${item.image}`} alt="movie" /> 
-       </div>)
-       
+       <div className='img-div'
+        onMouseEnter={()=>setIsHovered(true)}
+        onMouseLeave={()=>setIsHovered(false)}
+       >
+       <SearchItem item={item}/>
+     
+       </div>
+   
+  
+       )
+
 
     })}
     
@@ -34,17 +47,17 @@ export default function Search({data}) {
 
 
 const Container=styled.div`
- 
-  text-align:center;
+
   width:90vw;
   box-sizing: border-box;
-  margin:7rem auto;
+  margin:7rem auto ;
   display:grid;
   grid-template-columns: repeat(6, 1fr);
   row-gap: 30px;
   column-gap: 5px;
+  padding-bottom:7rem;
   .img-div{
-       overflow: hidden;
+   
       img{
         width:100%;
         height:100%;

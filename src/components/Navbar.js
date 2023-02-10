@@ -1,6 +1,7 @@
 import React, { useState ,useRef,useEffect} from 'react';
 import styled from 'styled-components';
 import logo from '../assets/logo.png';
+import w from '../assets/w.png'
 import {FaPowerOff, FaSearch}from 'react-icons/fa'
 import {AiOutlineClose}from 'react-icons/ai' 
 import { app } from '../utils/firebase-config.js'
@@ -69,14 +70,14 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
         <nav className={`flex ${isScrolled? "scrolled":""}`}>
            <div className="left flex a-center">
               <div className="brand flex a-center j-center">
-                 <img src={logo} alt="logo" />
+                 <img src={logo} alt="logo"   className="logo-img"/>
               </div>
               <ul className='links flex'>
              {links.map(({name,link})=>{
                 return(
-                  <li key={name}><Link to={link}  onClick={e => {if(name === "Home"){  e.preventDefault();
+                  <li key={name}><Link to={link}  onClick={e => {  
                   
-                    handleClick()} }}>{name}</Link></li>
+                    handleClick() }}>{name}</Link></li>
                 )
 
              })}
@@ -146,8 +147,8 @@ const Container=styled.div`
     width:100%;
     justify-content:space-between;
     position:fixed;
-    z-index:2;
-    padding:0 4rem;
+    z-index:100;
+    padding:0 2.5rem;
     align-items:center;
     transition:0.3s ease-in-out;
     .left{
@@ -228,6 +229,18 @@ const Container=styled.div`
           visibility:visible;
         } 
       }
+  }
+
+  @media (max-width: 850px) {
+    .links{
+      display:none;
+    }
+    .logo-img{
+      content: url(${w});
+      width:10rem;
+      
+      
+    }
   }
 
 `

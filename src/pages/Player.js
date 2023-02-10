@@ -16,8 +16,6 @@ export default function Player() {
             <BsArrowLeft onClick={()=> navigate(-1)}/>
         </div>
         <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;mute;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-
-        {/* <video src={video} autoPlay loop controls muted ></video> */}
        </div>
 
     </Container>

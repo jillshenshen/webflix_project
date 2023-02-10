@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState ,useRef} from 'react'
+import { useState ,useRef,useContext} from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -12,6 +12,7 @@ import { getTrailer} from '../store/index.js'
 import { arrayUnion,doc,updateDoc } from 'firebase/firestore'
 import {db,app} from '../utils/firebase-config'
 import 'firebase/compat/auth'
+import { AppContext } from "../App.js";
 
 export default function Card({movieData}) {
   const [show, setShow] = useState(false);
@@ -22,6 +23,9 @@ export default function Card({movieData}) {
 
   const [like,setLike]=useState(false)
   const [saved,setSaved]=useState(false)
+ 
+
+  const { email,setEmail } = useContext(AppContext);
   
   useEffect(()=>{
     if(isHovered){
@@ -42,16 +46,17 @@ export default function Card({movieData}) {
  }, [isHovered]);
 
 
-
-
-
-let email
+// let email
 app.auth().onAuthStateChanged(function(user) {
   //這裡會印出User的資訊
-  email=user.email
+  // email=user.email
+  setEmail(user.email)
 })
 
+
+ 
  const saveShow = async() => {
+    
       setLike(!like) 
       const movieID=doc(db,'users',email)
        await updateDoc(movieID,{
@@ -60,14 +65,14 @@ app.auth().onAuthStateChanged(function(user) {
           name: movieData.name,
           image:movieData.image,
           genres:movieData.genres
-         })
-      }) 
+         }),
+         toWatch:arrayUnion(
+          movieData.image
+         )
+      
+        }) 
  }
 
-
-
-
- 
 
 
 
@@ -85,7 +90,7 @@ app.auth().onAuthStateChanged(function(user) {
                <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
                onClick={()=>navigate('/player')}
                 /> 
-                <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;mute;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
              
                </div>
                <div className="info-container flex column">
@@ -93,6 +98,7 @@ app.auth().onAuthStateChanged(function(user) {
                    <div className="icons flex j-between">
                       <div className="controls flex">
                          <IoPlayCircleSharp title="play" onClick={()=>navigate('/player')}/>
+
                          <p onClick={saveShow}>
                          {like?<BsCheck/>:  <AiOutlinePlus title="Add to my list" />}
                          </p>
