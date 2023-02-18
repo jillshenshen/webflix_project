@@ -9,7 +9,7 @@ import styled from 'styled-components'
 const Header = (props) => {
     const navigate= useNavigate()
   return (
-    <Container className='flex  a-center j-between'>
+    <Container>
        <div className="logo">
            <img src={logo} alt="logo" />
        </div>
@@ -19,7 +19,13 @@ const Header = (props) => {
 }
 
 const Container=styled.div`
+
+ display:flex;
+ justify-content: space-between;
+ align-items: center;
  padding:0 4rem;
+
+
  .logo{
     img{
         height:12rem;
@@ -35,8 +41,12 @@ const Container=styled.div`
     color:white;
     border-radius:0.2rem;
     font-weight:bolder;
-    font-size:1.05rem
+    font-size:1.05rem;
  }
+ @media (max-width:450px) {
+   padding:0 1rem;
+ }
+
 
 
 `

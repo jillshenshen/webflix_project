@@ -14,7 +14,7 @@ import {db,app} from '../utils/firebase-config'
 import 'firebase/compat/auth'
 import { AppContext } from "../App.js";
 
-export default function Card({movieData}) {
+export default function Copy({movieData}) {
   const [show, setShow] = useState(false);
   const [isHovered,setIsHovered]=useState(false)
   const navigate=useNavigate()
@@ -50,11 +50,13 @@ export default function Card({movieData}) {
  }, [isHovered]);
 
 
-// let email
+
 app.auth().onAuthStateChanged(function(user) {
-  //這裡會印出User的資訊
-  // email=user.email
-  setEmail(user.email)
+ 
+  if(user){
+    setEmail(user.email)
+  }
+ 
 })
 
 
@@ -81,26 +83,32 @@ app.auth().onAuthStateChanged(function(user) {
 
 
 
+
+
   return (
     <Container
     onMouseEnter={()=>setIsHovered(true)}
     onMouseLeave={()=>setIsHovered(false)}
-    show={show}
+  
+    className={show ? 'showHover' : ''}
     >
-      <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
-      />
-      {
-        show &&(
-            <div className='hover'>
+
+     <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
+      /> 
+  
+
+     {/* <div className='hover'>
                <div className="image-video-container">
                <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
                onClick={()=>navigate('/player')}
                 /> 
-                <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+
+                {show&&    <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>}
+            
              
                </div>
                <div className="info-container flex column">
-                   <h3 className='name' onClick={()=>navigate('/player')}>{movieData.name}</h3>
+                   <h3 className='name'>{movieData.name}</h3>
                    <div className="icons flex j-between">
                       <div className="controls flex">
                          <IoPlayCircleSharp title="play" onClick={()=>navigate('/player')}/>
@@ -125,9 +133,51 @@ app.auth().onAuthStateChanged(function(user) {
                    </div>
                </div>
 
-            </div>)
-      }
-    
+            </div> */}
+   
+
+
+
+     {show&&(
+            <div className='hover'
+
+            >
+               <div className="image-video-container">
+               <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
+               onClick={()=>navigate('/player')}
+                /> 
+                <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+             
+               </div>
+               <div className="info-container flex column">
+                   <h3 className='name'>{movieData.name}</h3>
+                   <div className="icons flex j-between">
+                      <div className="controls flex">
+                         <IoPlayCircleSharp title="play" onClick={()=>navigate('/player')}/>
+
+                         <p onClick={saveShow}>
+                         {like?<BsCheck/>:  <AiOutlinePlus title="Add to my list" />}
+                         </p>
+                       
+                       
+                      </div>
+
+                      <div className="info">
+                        <BiChevronDown title="More info"/>
+                      </div>
+                   </div>
+                   <div className="genres flex">
+                    <ul className='flex'>
+                       {movieData.genres.map((genre)=>(
+                        <li key={genre}>{genre}</li>
+                       ))} 
+                    </ul>
+                   </div>
+               </div>
+
+            </div>
+      
+            )}
     </Container>
   )
 }
@@ -135,22 +185,25 @@ app.auth().onAuthStateChanged(function(user) {
 const Container=styled.div`
    max-width:230px;
    width:230px;
-   
    height:100%;
-   cursor:pointer;
    position:relative;
-   z-index:${(props)=>(props.show?"99":"")};
-   transform: ${(props)=>(props.show?"scale(1.05)":"")};
-   img{
-    border-radius:0.2rem;
+   transition: transform 100ms ease-out, border-radius 200ms ease-out;
+   z-index: 1;
+   
+    img{
     width:100%;
     height:100%;
-    z-index:10;
-   }
+    object-fit:cover;
+    }
+
+   
+
+
    .hover{
-    z-index:101;
+    ${'' /* display: none; */}
+    z-index:9999999;
     height:max-content;
-    width:20rem;
+    width:15rem;
     position:absolute;
     ${'' /* top:-18vh;
     left:0; */}
@@ -162,12 +215,13 @@ const Container=styled.div`
     transition:2s ease-in-out;
     
  
+
     .image-video-container{
         position:relative;
-        height:180px;
+        height:120px;
         img{
             width:100%;
-            height:180px;
+            height:120px;
             object-fit:cover;
             top:0;
             z-index:4;
@@ -175,7 +229,7 @@ const Container=styled.div`
         }
         video,iframe{
             width:100%;
-            height:180px;
+            height:120px;
             object-fit:cover;
             border-radius:0.3rem;
             z-index:5;
@@ -183,16 +237,20 @@ const Container=styled.div`
         }
     }
     .info-container{
-        padding:1rem;
-        gap:0.5rem;
+        padding:0.6rem;
+        gap:0.2rem;
+        h3{
+          font-size:1rem;  
+        }
+
     }
     .icons{
         .controls{
             display:flex;
-            gap:1rem;
+            gap:0.6rem;
         }
         svg{
-            font-size:2rem;
+            font-size:1.2rem;
             cursor:pointer;
             transition:0.3s ease-in-out;
             &:hover{
@@ -202,9 +260,9 @@ const Container=styled.div`
     }
     .genres{
         ul{
-            gap:1rem;
+            gap:0.6rem;
             li{
-                padding-right:0.7rem;
+                padding-right:0.3rem;
                 &:first-of-type{
                     list-style-type:none;
                 }
@@ -212,6 +270,34 @@ const Container=styled.div`
         }
     }
    }
-   transition: all 0.2s ease-in-out;
+
+
+
+   &.showHover{
+    position:relative;
+    border-radius: 10px;
+
+   
+    box-shadow: 0 0 2px #000a;
+    z-index:999999;
+    img{
+    transform: scale(1.5);
+    top:0;
+    z-index:4;
+    position:absolute;
+    }
+    ${'' /* .hover{
+    
+    display: block;
+    object-fit:cover;
+    border-radius:0.3rem;
+    position:absolute;
+   
+     
+  
+    } */}
+   }
+
+   transition: all 0.3s ease-in-out;
 
 `

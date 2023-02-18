@@ -2,11 +2,15 @@ import React, { useState ,useContext} from 'react'
 import Navbar from  '../components/Navbar.js'
 import home from '../assets/home.jpg'
 import peaky from '../assets/peaky.png'
+import aftersun from '../assets/aftersun.jpeg'
+import bleu from '../assets/bleu.jpeg'
+import love from '../assets/love.jpeg'
 import { FaPlay } from 'react-icons/fa'
 import {AiOutlineInfoCircle} from  'react-icons/ai'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { getTrailer} from '../store/index.js'
 import { useEffect } from 'react'
 import { fetchMovies, getGenres} from '../store/index.js'
 import Slider from '../components/Slider.js'
@@ -59,7 +63,16 @@ export default function Netflix() {
     }     
    },[data])
 
- 
+  const afterSun=()=>{
+    const payload = {
+      id: 965150,
+      movieType: "movie"
+  };
+    dispatch(getTrailer(payload))
+
+    navigate('/player')
+
+  }
 
 
   return (
@@ -71,15 +84,15 @@ export default function Netflix() {
           <Search data={data}/>:(
           <>         
           <div className="hero">
-         <img src={home} alt="background" 
+         <img src={bleu} alt="background" 
           className='background-image'
          />
          <div className="container">
           <div className="logo">
-            <img src={peaky} alt="movie logo" />
+            <p>Blue</p>
           </div>
           <div className="buttons flex">
-            <button className='flex j-center a-center' onClick={()=>navigate('/player')}><FaPlay/>Play</button> 
+            <button className='flex j-center a-center' onClick={()=>afterSun()}><FaPlay/>Play</button> 
             <button className='flex j-center a-center'><AiOutlineInfoCircle/>More Info</button> 
           </div>
          </div>
@@ -96,12 +109,13 @@ export default function Netflix() {
 
 
 const Container=styled.div`
+   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap');
 
    background-color:black;
    .hero{
     position:relative;
     .background-image{
-      filter:brightness(60%);
+      filter:brightness(40%);
      
     }
     img{
@@ -114,11 +128,12 @@ const Container=styled.div`
       bottom:5rem;
       left:1.5rem;
       .logo{
-        img{
-          width:60%;
-          height:60%;
-          margin-left:2rem;
-          object-fit:cover;
+        margin-left:3rem;
+        p{
+          font-size:100px;
+    
+          font-family: 'Cormorant Garamond', serif;
+          
         }
       }
       .buttons{

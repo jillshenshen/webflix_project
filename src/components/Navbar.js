@@ -138,7 +138,7 @@ const Container=styled.div`
   
   .scrolled{
  
-    background-color:black;
+    background-color:grey;
   }
   nav{
     position:sticky;

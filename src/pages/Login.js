@@ -9,22 +9,34 @@ import 'firebase/compat/auth'
 
 export default function Login(){
   const navigate= useNavigate()
+  const [errorMsg,setErrorMsg]=useState("")
+  const [error,setError]=useState(false)
   const [formValue,setFormValue]=useState({
    email:"",
    password:"",
   }) 
+
+
   const handleLogIn=async()=>{
     try{
       const {email,password}=formValue
       await app.auth().signInWithEmailAndPassword(email,password)
 
-    }catch(err){
-      console.log(err)
+    }catch(error){
+      setError(true)
+      console.log(error.code)
+      if(error.code==="auth/invalid-email" || error.code==="auth/user-not-found" ){
+        setErrorMsg("Not found this email,please sign up first")
+    }else if(error.code==="auth/wrong-password"){
+      setErrorMsg("Wrong password")
+      }else{
+        setErrorMsg("Login failed")
+      }
     }
   }
 
   app.auth().onAuthStateChanged(function(user) {
-   console.log(user);    //這裡會印出User的資訊
+   //這裡會印出User的資訊
    if (user) {
       navigate("/")
      // User is signed in.
@@ -42,13 +54,17 @@ export default function Login(){
                 <div className="title">
                     <h3>Login</h3>
                 </div>
+             
+              
+                
                 <div className="container flex column">
                 <input type="email" placeholder='Email Address' name='email' value={formValue.email} onChange={(e)=>setFormValue({...formValue,[e.target.name]:e.target.value})}/>
                 <input type="password" placeholder='Password' name='password' 
                     value={formValue.password} onChange={(e)=>setFormValue({...formValue,[e.target.name]:e.target.value})}
 
                     />
-                
+                      {error? <p className='error'>Error: 
+                  <span>   {errorMsg}</span></p>:""}
                   <button onClick={handleLogIn}>Log In</button>
                 </div>
             </div>
@@ -78,12 +94,21 @@ position:relative;
    .form-container{
       gap:2rem;
       height:85vh;
+     
       .form{
         padding:2rem;
-        width:25vw;
+        width:320px;
         background-color:#000000b0;
         gap:2rem;
         color:white;
+    
+
+        .error{
+          color:#e50914;
+          padding:0 1rem;
+      
+        }
+       
         .container{
             gap:2rem;
             input{

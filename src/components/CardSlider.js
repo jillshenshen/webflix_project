@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 
 
-export default function CardSlider({data,title}) {
+export default function CardSlider({data,title,style}) {
    const [showControls,setShowControls]=useState(false) 
    const [sliderPosition,setSliderPosition]=useState(0);
    const listRef=useRef();
@@ -15,12 +15,12 @@ export default function CardSlider({data,title}) {
       const distance=listRef.current.getBoundingClientRect().x-66;
       
       if(direction==="left"&&sliderPosition>0){
-          listRef.current.style.transform=`translateX(${1150+distance+32}px)`
+          listRef.current.style.transform=`translateX(${230+distance+32}px)`
           setSliderPosition(sliderPosition-1)
       }
 
       if(direction==="right"&&sliderPosition<5){
-        listRef.current.style.transform=`translateX(${-1150+distance}px)`
+        listRef.current.style.transform=`translateX(${-230+distance}px)`
         setSliderPosition(sliderPosition+1)
     }
   
@@ -34,7 +34,7 @@ export default function CardSlider({data,title}) {
       className='flex column '
       onMouseEnter={()=>setShowControls(true)}
       onMouseLeave={()=>setShowControls(false)}
-
+      style={style}
     >   
        <h1>{title}</h1>
        <div className="wrapper">
@@ -69,11 +69,10 @@ const Container=styled.div`
   position:relative;
   padding:2rem 0;
   box-sizing:border-box;
-
   
-
   h1{
     margin-left:50px;
+
   }
   .wrapper{
     .slider{
@@ -85,7 +84,7 @@ const Container=styled.div`
     }
     .slider-action{
         position:absolute;
-        z-index:99;
+        z-index:2;
         height:100%;
         top:0;
         bottom:0;
@@ -93,6 +92,8 @@ const Container=styled.div`
         transition:0.3s ease-in-out;
         svg{
             font-size:2rem;
+            position:absolute;
+        z-index:2;
         }
        
     }

@@ -10,6 +10,8 @@ import 'firebase/compat/auth'
 
 export default function Signup(){
   const navigate= useNavigate()
+  const [errorMsg,setErrorMsg]=useState("")
+  const [error,setError]=useState(false)
   const [showPassword,setShowPassword]=useState(false)
   const [formValue,setFormValue]=useState({
    email:"",
@@ -28,10 +30,21 @@ export default function Signup(){
             })
           
 
-    }catch(err){
-      console.log(err)
-    }
-  }
+    }catch(error){
+      setError(true)
+      console.log(error.code)
+      if(error.code==="auth/invalid-email"){
+         setErrorMsg("Please enter valid email.")
+        
+      }else if(error.code==="auth/weak-password"){
+         setErrorMsg("Weak password,please enter at least six characters. ")
+       
+      }else if(error.code==="auth/email-already-in-use"){
+         setErrorMsg(" This Email is already in use,please enter another one.")
+      }else{
+         setErrorMsg("sign up failed")
+      }
+  }}
 
   app.auth().onAuthStateChanged(function(user) {
    
@@ -67,6 +80,7 @@ export default function Signup(){
       
         {!showPassword && <button onClick={()=>setShowPassword(true)}>Get Start</button>}
       </div>
+        {error?<p className='error'>Error: <span>  {errorMsg}</span></p>:""}
         <button onClick={handleSignIn}>Sign up</button>
       </div>
 
@@ -92,6 +106,7 @@ position:relative;
    grid-template-rows:15vh 85vh;
 
    .body{
+     
       gap:1rem;
       .text{
          gap:1rem;
@@ -125,8 +140,17 @@ position:relative;
             font-weight:bolder;
             font-size:1.05rem
          }
+    
 
       }
+      .error{
+          color:#e50914;
+          font-weight:bolder;
+          background-color:rgba(0,0,0,0.6);
+          padding:1rem;
+          border-radius:0.2rem;
+      }
+     
       button{
             padding:0.5rem 1rem;
             background-color:#e50914;
@@ -140,6 +164,74 @@ position:relative;
    }
 }
 
+@media (max-width: 1000px) {
+  .content{
+   .body{
+     
+      gap:1rem;
+      .text{
+         gap:1rem;
+         text-align:center;
+         font-size:1rem;
+         
+         h1{
+            padding:0 20rem;
+         }
+      }
+      .form{
+         width:80%;
+
+         input{
+            padding:1rem;
+         }
+      }
+}
+
+ }}
+
+
+@media (max-width:750px) {
+
+   .content{
+      .body{
+         width:90vw;
+         margin:0 auto;
+         .form{
+            grid-template-columns:1fr;
+      
+       }
+
+      }
+   }
+   
+}
+
+
+@media (max-width:450px) {
+   
+
+.content{
+ 
+   .body{
+      
+      .text{
+      width:90%;
+      text-align:center;
+      font-size:1.2rem;
+      h1{
+            padding:0 ;
+         }
+      
+      }
+      .form{
+     
+   
+    }
+
+   }
+}
+
+}
 
 `;
 

@@ -8,8 +8,8 @@ import Card from './Card.js'
 
 
 export default function Search({data}) {
-  const [show, setShow] = useState(false);
-  const [isHovered,setIsHovered]=useState(false)
+  // const [show, setShow] = useState(false);
+  // const [isHovered,setIsHovered]=useState(false)
   const dispatch=useDispatch()
   const searchArray=useSelector((state)=>state.netflix.search)
   
@@ -27,8 +27,8 @@ export default function Search({data}) {
     {searchArray.map((item,index)=>{
        return (
        <div className='img-div'
-        onMouseEnter={()=>setIsHovered(true)}
-        onMouseLeave={()=>setIsHovered(false)}
+        // onMouseEnter={()=>setIsHovered(true)}
+        // onMouseLeave={()=>setIsHovered(false)}
        >
        <SearchItem item={item}/>
      

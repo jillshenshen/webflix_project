@@ -1,3 +1,4 @@
+
 import React ,{useState,useRef,useEffect,useContext}from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
@@ -26,7 +27,11 @@ export default function ListItem({item,myList}) {
 
   useEffect(()=>{
     if(isHovered){
-        dispatch(getTrailer(item.id))
+      const payload = {
+        id: item.id,
+        movieType: item.type
+    };
+        dispatch(getTrailer(payload))
     }   
   },[isHovered])
 
@@ -83,6 +88,9 @@ export default function ListItem({item,myList}) {
      top={top}
      right={right}
      left={left}
+     show={show}
+     isHovered={isHovered}
+   
     > 
     
      <img src={`https://image.tmdb.org/t/p/original${item.image}`} alt="movie" /> 
@@ -137,7 +145,10 @@ export default function ListItem({item,myList}) {
 const Container = styled.div`
   position: relative;
   cursor: pointer;
+  z-index:${(props)=>(props.show?"99":"")};
+  transform: ${(props)=>(props.show?"scale(1.05)":"")};
   .hover {
+    
     z-index: 199;
     height: max-content;
     width: 120%;
@@ -150,7 +161,6 @@ const Container = styled.div`
     background-color: #181818;
     transition: 2s ease-in-out;
  
-
     .image-video-container {
       position: relative;
       height: 180px;
@@ -205,12 +215,13 @@ const Container = styled.div`
       }
     }
   }
+
+  transition: all 0.2s ease-in-out;
   @media (max-width: 990px) {
     .hover{
       left: ${(props) => (props.right < 50 ? '-5vw' : (props.left < 50 ? '0' : '-2vw'))};
     
    
-
     }
     
   }
@@ -219,18 +230,13 @@ const Container = styled.div`
       left: ${(props) => (props.right < 60 ? '-8vw' : (props.left < 50 ? '0' : '-2vw'))};
     
    
-
     }
     
   }
-
   @media (max-width: 450px) {
     .hover{
       left: ${(props) => (props.right < 60 ? '-5vw' : (props.left < 50 ? '0' : '-2vw'))};
     }
   }
-
  
-
-
 `;

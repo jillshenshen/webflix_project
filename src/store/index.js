@@ -30,7 +30,8 @@ export const getSearch=createAsyncThunk('netflix/search',async(input,thunkApi)=>
               id:result.id,
               name:result.original_name?result.original_name:result.original_title,
               image:result.backdrop_path,
-              genres:movieGenres.slice(0,3)
+              genres:movieGenres.slice(0,3),
+              type:result.media_type
   
           })
           
@@ -44,9 +45,9 @@ export const getSearch=createAsyncThunk('netflix/search',async(input,thunkApi)=>
 
 
 
-export const getTrailer=createAsyncThunk('netflix/trailer',async(id)=>{
-
-    const {data:{results}}=await axios.get(`${TMDB_BASE_URL}/movie/${id}/videos?api_key=${API_KEY}`)
+export const getTrailer=createAsyncThunk('netflix/trailer',async(payload)=>{  
+ 
+    const {data:{results}}=await axios.get(`${TMDB_BASE_URL}/${payload.movieType}/${payload.id}/videos?api_key=${API_KEY}`)
     const youtube_v=  results[0].key
     return youtube_v
 })
@@ -73,7 +74,8 @@ const createArrayFromRawData=(array,movieArray,genres)=>{
             id:movie.id,
             name:movie.original_name?movie.original_name:movie.original_title,
             image:movie.backdrop_path,
-            genres:movieGenres.slice(0,3)
+            genres:movieGenres.slice(0,3),
+            type:movie.media_type
         })
       } 
    })

@@ -90,17 +90,18 @@ export default function List() {
   
       {clickDrag?<Drag toWatch={toWatch} watching={watching} watched={watched} drop={drop}/>:
 
-      <div className='list-container'>
+      <div className='list-container' >
       
       {myList.map((item)=>{
         return  <div className='list-item'
+               
                   onMouseEnter={()=>
                   setIsHovered(true)
-                 
+                
                   }
                   onMouseLeave={()=>setIsHovered(false)}
                 >
-                 <ListItem item={item} myList={myList}/>
+                 <ListItem key={item.id} item={item} myList={myList}  />
        
         </div>
       })}
@@ -119,6 +120,7 @@ export default function List() {
 }
 
 const Container=styled.div`
+  
   
  .buttons{
   margin:6rem auto 1rem;
@@ -161,10 +163,11 @@ const Container=styled.div`
   row-gap: 30px;
   column-gap: 5px;
   position: relative;
+
  
 
   .list-item{
-   
+     
   img{
         width:100%;
         height:100%;

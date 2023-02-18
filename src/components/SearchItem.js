@@ -26,7 +26,11 @@ export default function SearchItem({item}) {
 
   useEffect(()=>{
     if(isHovered){
-        dispatch(getTrailer(item.id))
+      const payload = {
+        id: item.id,
+        movieType: item.type
+    };
+        dispatch(getTrailer(payload))
     }   
   },[isHovered])
 
@@ -65,7 +69,8 @@ export default function SearchItem({item}) {
         id:item.id,
         name: item.name,
         image:item.image,
-        genres:item.genres
+        genres:item.genres,
+        type:item.type
        }),
        toWatch:arrayUnion(
         item.image
@@ -85,6 +90,7 @@ export default function SearchItem({item}) {
      top={top}
      right={right}
      left={left}
+     show={show}
     > 
     
      <img src={`https://image.tmdb.org/t/p/original${item.image}`} alt="movie" /> 
@@ -139,7 +145,8 @@ export default function SearchItem({item}) {
 const Container = styled.div`
   position: relative;
   cursor: pointer;
-
+  z-index:${(props)=>(props.show?"99":"")};
+  transform: ${(props)=>(props.show?"scale(1.05)":"")};
   .hover {
     z-index: 199;
     height: max-content;
@@ -153,7 +160,6 @@ const Container = styled.div`
     background-color: #181818;
     transition: 2s ease-in-out;
  
-
     .image-video-container {
       position: relative;
       height: 180px;
@@ -208,12 +214,14 @@ const Container = styled.div`
       }
     }
   }
+
+  transition: all 0.2s ease-in-out;
+
   @media (max-width: 990px) {
     .hover{
       left: ${(props) => (props.right < 50 ? '-5vw' : (props.left < 50 ? '0' : '-2vw'))};
     
    
-
     }
     
   }
@@ -222,18 +230,13 @@ const Container = styled.div`
       left: ${(props) => (props.right < 60 ? '-8vw' : (props.left < 50 ? '0' : '-2vw'))};
     
    
-
     }
     
   }
-
   @media (max-width: 450px) {
     .hover{
       left: ${(props) => (props.right < 60 ? '-5vw' : (props.left < 50 ? '0' : '-2vw'))};
     }
   }
-
  
-
-
 `;
