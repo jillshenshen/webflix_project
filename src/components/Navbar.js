@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import logo from '../assets/logo.png';
 import w from '../assets/w.png'
 import {FaPowerOff, FaSearch}from 'react-icons/fa'
+import {VscTriangleDown, VscTriangleUp}from 'react-icons/vsc'
 import {AiOutlineClose}from 'react-icons/ai' 
 import { app } from '../utils/firebase-config.js'
 import { Link } from 'react-router-dom';
@@ -33,6 +34,8 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
    
   const [showSearch,setShowSearch]=useState(false) 
   const [inputHover,setInputHover]=useState(false) 
+  const [showMenu,setShowMenu]=useState(false)
+  const [menuHover,setMenuHover]=useState(false)
   const inputRef = useRef(null);
   
   useEffect(() => {
@@ -43,7 +46,7 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
     }
   }, [showSearch]);
 
-
+ 
   const handleClick = () => {
     setIsData(false);
     setShowSearch(false);
@@ -62,6 +65,13 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
     dispatch(getSearch("%$#"));
   }
 
+  const handleMenu=()=>{
+    setTimeout(()=>{
+      setShowMenu(false)
+    },500)
+    
+  }
+
 
   
 
@@ -72,7 +82,12 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
               <div className="brand flex a-center j-center">
                  <img src={logo} alt="logo"   className="logo-img"/>
               </div>
+              <li 
+              onMouseEnter={()=>setShowMenu(true)}
+              onMouseLeave={()=>handleMenu()}
+              className='menu'>Menu<VscTriangleDown/></li>
               <ul className='links flex'>
+             
              {links.map(({name,link})=>{
                 return(
                   <li key={name}><Link to={link}  onClick={e => {  
@@ -126,6 +141,23 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
                </div>
                <button onClick={()=>app.auth().signOut()}><FaPowerOff/></button>
            </div>  
+           <div className={showMenu || menuHover?'menu-div':'menu-div menu-none'}
+             onMouseEnter={()=>setMenuHover(true)}
+              onMouseLeave={()=>setMenuHover(false)}
+           >
+           <VscTriangleUp/>
+            <ul className='menu-ul'>
+               
+             {links.map(({name,link})=>{
+                return(
+                  <li key={name} ><Link to={link}  onClick={e => {  
+                  
+                  handleClick() }}>{name}</Link></li>
+                )
+
+             })}
+            </ul>
+           </div>
    
         </nav>
     </Container>
@@ -135,10 +167,11 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
 
 
 const Container=styled.div`
+  position:relative;
   
   .scrolled{
  
-    background-color:grey;
+    background-color:black;
   }
   nav{
     position:sticky;
@@ -152,18 +185,32 @@ const Container=styled.div`
     align-items:center;
     transition:0.3s ease-in-out;
     .left{
+      font-weight:600;
       gap:2rem;
+     
       .brand{
+       
         img{
-          height:12rem;
+          height:10rem;
           margin-top:0.5rem;
 
         }
       }
+      .menu{
+            display:none;
+            svg{
+              margin-top:0.2rem;
+              margin-left:0.2rem;
+            }
+          }
       .links{
+         
           list-style-type:none;
           gap:2rem;
           li{
+             &:hover{
+          opacity:0.8;
+           }
             a{
               color:white;
               text-decoration:none;
@@ -229,18 +276,107 @@ const Container=styled.div`
           visibility:visible;
         } 
       }
+
+      .menu-div{
+        z-index:999;
+        position:absolute;
+        top:4.7rem;
+        left:2.8rem;
+        background-color:rgba(0, 0, 0, 0.9);
+        width:15rem;
+        height:220px;
+        svg{
+            position:absolute;
+            font-size:1.2rem;
+            top:-0.8rem;
+            left: 50%;
+            transform: translateX(-50%);
+
+          }
+
+         .menu-ul{
+    
+          text-align:center;
+          list-style-type:none;
+          font-weight:600;
+          pointer-events: auto;
+         
+       
+          li{
+            display:block;
+            pointer-events: auto;
+            padding:18px 0;
+      
+         
+             &:hover{
+              pointer-events: auto;
+              background-color: rgba(187, 185, 185, 0.1);
+           }
+            a{
+              color:white;
+              text-decoration:none;
+            }
+          }
+         } 
+      
+
+      }
+      .menu-div::before{
+          content:"";
+          display:block;
+          height:0.1rem;
+          width:100%;
+          background-color:white;
+        }
+
+      .menu-none{
+        display:none;
+      }  
   }
 
   @media (max-width: 850px) {
+    nav{
+      padding-left:0rem;
+      .left{
+        .menu{
+        display:flex;
+        position:absolute;
+        left:7rem;
+        cursor:pointer;
+      }
+    
+      .brand{
+        img{
+        
+          margin-top:0rem;
+
+        }
+      }
+    }
+   
     .links{
+      gap:0rem;
       display:none;
     }
     .logo-img{
       content: url(${w});
-      width:10rem;
+      width:70%;
+      height:50%;
       
       
     }
   }
+
+  @media (max-width: 465px) {
+    .right{
+      .search{
+        svg{
+          display:none;
+        }
+       
+      }
+    }
+  }
+  
 
 `

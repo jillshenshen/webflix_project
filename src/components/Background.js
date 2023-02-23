@@ -1,5 +1,5 @@
 import React from 'react'
-import netflix from '../assets/netflix.webp' 
+import netflix from '../assets/netflix.jpeg' 
 import styled from 'styled-components'
 import '../index.css'
 

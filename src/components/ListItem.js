@@ -16,6 +16,7 @@ import 'firebase/compat/auth'
 export default function ListItem({item,myList}) {
   const [show, setShow] = useState(false);
   const [isHovered,setIsHovered]=useState(false)
+  const [imageNone,setImageNone]=useState(false)
   const [top,setTop]=useState(0)
   const [left,setLeft]=useState(0)
   const [right,setRight]=useState(0)
@@ -36,6 +37,7 @@ export default function ListItem({item,myList}) {
   },[isHovered])
 
   const timeoutRef = useRef(null);
+  const imageRef=useRef(null)
   const divRef = useRef(null);
 
   useEffect(() => {
@@ -43,11 +45,12 @@ export default function ListItem({item,myList}) {
       timeoutRef.current = setTimeout(() => {
         setShow(true);
       }, 300);
+    
       const distanceFromTop = divRef.current.getBoundingClientRect().top;
       setTop(distanceFromTop);
       const distanceFromLeft=divRef.current.getBoundingClientRect().left;
       setLeft(distanceFromLeft)
-   
+     
      
       const distanceFromRight=divRef.current.getBoundingClientRect().right;
       const viewportWidth = window.innerWidth;
@@ -57,9 +60,20 @@ export default function ListItem({item,myList}) {
 
     } else {
       clearTimeout(timeoutRef.current);
+  
       setShow(false);
     }
   }, [isHovered]);
+
+  useEffect(() => {
+    if (show) {
+      imageRef.current = setTimeout(() => {
+        setImageNone(true); 
+      }, 300);
+    } else {
+      setImageNone(false);
+    }
+  }, [show]);
 
 
 
@@ -90,6 +104,7 @@ export default function ListItem({item,myList}) {
      left={left}
      show={show}
      isHovered={isHovered}
+     imageNone={imageNone}
    
     > 
     
@@ -166,9 +181,13 @@ const Container = styled.div`
       height: 180px;
   
       img {
+        display:${(props)=>(props.imageNone?'none':'block')};
         width: 100%;
         height: 180px;
         object-fit: cover;
+        border-radius:1rem;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
         top: 0;
         z-index: 4;
         position: absolute;
@@ -176,13 +195,19 @@ const Container = styled.div`
       }
       video,
       iframe {
+        
         width: 100%;
-        height: 180px;
+        height: 182px;
         left: 0;
         object-fit: cover;
         border-radius: 0.3rem;
         z-index: 5;
         position: absolute;
+        border: none;
+        border-radius:0.3rem;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    
       }
     }
     .info-container {

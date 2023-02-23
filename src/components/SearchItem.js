@@ -15,6 +15,7 @@ import 'firebase/compat/auth'
 export default function SearchItem({item}) {
   const [show, setShow] = useState(false);
   const [isHovered,setIsHovered]=useState(false)
+  const [imageNone,setImageNone]=useState(false)
   const [top,setTop]=useState(0)
   const [left,setLeft]=useState(0)
   const [right,setRight]=useState(0)
@@ -35,6 +36,7 @@ export default function SearchItem({item}) {
   },[isHovered])
 
   const timeoutRef = useRef(null);
+  const imageRef=useRef(null)
   const divRef = useRef(null);
 
   useEffect(() => {
@@ -59,6 +61,16 @@ export default function SearchItem({item}) {
       setShow(false);
     }
   }, [isHovered]);
+
+  useEffect(() => {
+    if (show) {
+      imageRef.current = setTimeout(() => {
+        setImageNone(true); 
+      }, 300);
+    } else {
+      setImageNone(false);
+    }
+  }, [show]);
 
   const saveShow = async() => {
    
@@ -91,6 +103,7 @@ export default function SearchItem({item}) {
      right={right}
      left={left}
      show={show}
+     imageNone={imageNone}
     > 
     
      <img src={`https://image.tmdb.org/t/p/original${item.image}`} alt="movie" /> 
@@ -165,6 +178,7 @@ const Container = styled.div`
       height: 180px;
       overflow: visible;
       img {
+        display:${(props)=>(props.imageNone?'none':'block')};
         width: 100%;
         height: 180px;
         object-fit: cover;
@@ -176,12 +190,16 @@ const Container = styled.div`
       video,
       iframe {
         width: 100%;
-        height: 180px;
+        height: 182px;
         left: 0;
         object-fit: cover;
         border-radius: 0.3rem;
         z-index: 5;
         position: absolute;
+        border: none;
+        border-radius:0.3rem;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
       }
     }
     .info-container {

@@ -34,20 +34,25 @@ export default function List() {
   const [clickDrag,setClickDrag]=useState(false)
 
 
-  useEffect(()=>{
-   
-    if(email){
-      onSnapshot(doc(db,'users',email),(doc)=>{
-        setMyList(doc.data()?.savedShows)  
-        setToWatch(doc.data()?.toWatch)  
-        setWatching(doc.data()?.watching)  
-        setWatched(doc.data()?.watched)  
-        setDrop(doc.data()?.drop)  
-      })
- 
-    }
-    
-  },[])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(email) {
+        onSnapshot(doc(db, 'users', email), (doc) => {
+          setMyList(doc.data()?.savedShows)  
+          setToWatch(doc.data()?.toWatch)  
+          setWatching(doc.data()?.watching)  
+          setWatched(doc.data()?.watched)  
+          setDrop(doc.data()?.drop)  
+        })
+      }
+    }, 500); // 延遲 500 毫秒
+    return () => clearTimeout(timer); // 在卸載時清除定時器
+  }, []);
+
+  
+
+
+
 
   // useEffect(()=>{ 
   //     let toWatchImg = myList.map(({image})=>{
@@ -71,9 +76,9 @@ export default function List() {
     }
   }, [isHovered]); 
 
-  
- 
 
+ 
+  console.log(email)
 
   return (
     <Container isScrolled={isScrolled}>
@@ -129,7 +134,10 @@ const Container=styled.div`
   display:grid;
   grid-template-columns: repeat(2, 1fr);
   button{
-      z-index:${(props)=>(props.isScrolled?'99':'101')};
+      ${'' /* z-index:${(props)=>(props.isScrolled?'99':'101')}; */}
+      z-index:99;
+      
+      position:relative;
       height:45px;
       pointer-events: auto;
       font-weight:600;

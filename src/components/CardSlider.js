@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import Card from './Card'
 import styled from 'styled-components'
 import { useRef } from 'react';
@@ -6,27 +6,99 @@ import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 
 
 export default function CardSlider({data,title,style}) {
+   const [load,setLoad]=useState(false)
    const [showControls,setShowControls]=useState(false) 
-   const [sliderPosition,setSliderPosition]=useState(0);
+   const [sliderIndex, setSliderIndex] = useState(0);
+   const [numItems, setNumItems] = useState(4);
+   const [show, setShow] = useState(false);
+   const [isHovered,setIsHovered]=useState(false)
    const listRef=useRef();
 
+  useEffect(()=>{
+    setTimeout(() => {
+      setLoad(true);
+    }, 300);
+
+
+  },[]) 
+
+
    const handleDirection=(direction)=>{
-  
-      const distance=listRef.current.getBoundingClientRect().x-66;
-      
-      if(direction==="left"&&sliderPosition>0){
-          listRef.current.style.transform=`translateX(${230+distance+32}px)`
-          setSliderPosition(sliderPosition-1)
+      if(direction==="right") {
+        if(sliderIndex+1>=numItems){
+          setSliderIndex(0)
+        }else{
+          setSliderIndex(sliderIndex + 1)};
+        }
+        
+      if(direction==="left") {
+        if(sliderIndex-1<0){
+          setSliderIndex(numItems-1)
+        }else{
+          setSliderIndex(sliderIndex - 1);
+        }
+
       }
-
-      if(direction==="right"&&sliderPosition<5){
-        listRef.current.style.transform=`translateX(${-230+distance}px)`
-        setSliderPosition(sliderPosition+1)
-    }
-  
-    
-
    } 
+
+   useEffect(() => {
+    function handleResize() {
+      const width = window.innerWidth;
+     
+      if (width > 1200) {
+        setNumItems(4);
+       
+      } else if (width > 900) {
+        setNumItems(5);
+      
+      } else if (width > 600) {
+        setNumItems(7);
+     
+      } else if (width > 450) {
+        setNumItems(10);
+       
+      } else {
+        setNumItems(20);
+       
+      }
+   
+
+   
+    }
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  
+  const items = [];
+
+  for (let i = 0; i < numItems; i++) {
+    items.push(<div className={`${i === sliderIndex ? 'progress-item active' : 'progress-item'}`} key={i}></div>);
+  }
+
+  if(sliderIndex>=numItems){
+    setSliderIndex(numItems-1)
+  }
+
+  const timeoutRef = useRef(null);
+   useEffect(() => {
+   if (isHovered) {
+     timeoutRef.current = setTimeout(() => {
+       setShow(true);
+     }, 300);
+   } else {
+     clearTimeout(timeoutRef.current);
+     setShow(false);
+   }
+ }, [isHovered]);
+
+ 
+ 
   
    
   return (
@@ -34,29 +106,33 @@ export default function CardSlider({data,title,style}) {
       className='flex column '
       onMouseEnter={()=>setShowControls(true)}
       onMouseLeave={()=>setShowControls(false)}
+      sliderIndex={sliderIndex}
       style={style}
     >   
-       <h1>{title}</h1>
-       <div className="wrapper">
-          <div className={`slider-action left ${!showControls ? 'none' :''} flex j-center a-center`}>
-
-          <AiOutlineLeft onClick={()=>handleDirection('left')}/>
-
-          </div>
-
-          <div className='flex slider' ref={listRef}>
-          {data.map((movie,index)=>{
-            return <Card movieData={movie} index={index} key={movie.id} />
-
-          })}   
-         </div>
-
-         <div className={`slider-action right ${!showControls ? 'none' :''} flex j-center a-center`}>
-
-         <AiOutlineRight onClick={()=>handleDirection('right')}/>
-
-         </div>
+       
+       <div className="header">
+            <h3 className='title'>{load?title:''}</h3>
+            <div className={`${!showControls?'none':'progress-bar' }`}>
+            {items}
+              
+            </div>
        </div>
+
+      <div className="container">
+             <button className='handle left-handle'  onClick={()=>handleDirection('left')}>
+                <div className={`${!showControls?'none':'text' }`} >&#8249;</div></button>
+
+           <div className="slider">
+      
+           {data.map((movieData,index)=>{
+            return <Card movieData={movieData}/>         
+          })}    
+           </div>
+
+
+           <button className='handle right-handle' onClick={()=>handleDirection('right')}>
+                <div className={`${!showControls?'none':'text' }`} >&#8250;</div></button>
+      </div>
        
 
     </Container>
@@ -67,48 +143,145 @@ export default function CardSlider({data,title,style}) {
 const Container=styled.div`
   gap:1rem;
   position:relative;
-  padding:2rem 0;
+  padding:1rem 0;
   box-sizing:border-box;
-  
-  h1{
-    margin-left:50px;
+  margin-bottom:2.2rem;
+.container{
+ display: flex;
 
-  }
-  .wrapper{
+}
+.slider{
+    --items-per-screen:5;
+    display: flex;
+    flex-grow: 1;
+    margin:0 .2rem;
+    transform: translateX(calc(${props => props.sliderIndex} * -100%));
+    transition:transform 550ms ease-in-out;
+    
+}
+
+
+.handle{
+    border: none;
+    border-radius: 0.3rem;
+    width:3rem;
+    flex-grow: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10;
+    margin:0.2rem 0;
+    cursor: pointer;
+    font-size: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.left-handle{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.right-handle{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.handle:hover{
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.text{
+    transition: transform 150ms ease-in-out;
+}
+
+.handle:hover .text{
+    transform: scale(1.1);
+}
+.none{
+   visibility:hidden;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2rem;
+    color: white;
+   
+}
+.title{
+    font-size: 2rem;
+    margin: 0;
+}
+
+.progress-bar{
+  display:flex;
+  gap:.2rem;
+  margin-top: 2rem;
+}
+
+.progress-item{
+  
+    flex:0 0 1rem;
+    min-width: 1rem;
+    height:.1rem;
+    background-color: rgb(83, 83, 83);
+}
+
+.progress-item.active{
+    background-color: white;
+}
+@media (max-width: 1200px) {
     .slider{
-        width:max-content;
-        gap:1rem;
-        transform:translateX(0px);
-        transition:all 0.5s ease-in-out;
-        margin-left:50px;
+        --items-per-screen:4;
     }
-    .slider-action{
+    
+    
+  }
+
+
+
+@media (max-width: 900px) {
+    .slider{
+        --items-per-screen:3;
+    }
+    
+    
+  }
+
+  @media (max-width: 600px) {
+    .title{
+    font-size: 1.5rem;
+    margin: 0;
+}
+.progress-bar{
+ 
+  margin-top: 1rem;
+}
+    .slider{
+        --items-per-screen:2;
+    }
+    
+  }
+
+  @media (max-width: 450px) {
+    .header{
+      padding:1rem 2rem;
+      position:relative;
+    }
+    .progress-bar{
         position:absolute;
-        z-index:2;
-        height:100%;
-        top:0;
-        bottom:0;
-        width:50px;
-        transition:0.3s ease-in-out;
-        svg{
-            font-size:2rem;
-            position:absolute;
-        z-index:2;
-        }
+        bottom: 0rem;
        
     }
-    .none{
-            display:none;
+    .progress-item{
+      flex:0 0 0.8rem;
+      min-width: 0.8rem;
     }
-    .right{
-        cursor:pointer;
-        right:0;
-
+    .slider{
+        --items-per-screen:1;
     }
-    .left{
-        cursor:pointer;
-        left:0;
-    }
+    
   }
+
 
 `

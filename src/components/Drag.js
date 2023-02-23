@@ -200,6 +200,7 @@ const Container=styled.div`
     justify-content: center;
     align-items: center;
     border-radius: 5px;
+    cursor:move;
     img{
         width:100%;
         height:100%;

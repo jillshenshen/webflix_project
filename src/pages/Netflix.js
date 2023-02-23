@@ -2,9 +2,7 @@ import React, { useState ,useContext} from 'react'
 import Navbar from  '../components/Navbar.js'
 import home from '../assets/home.jpg'
 import peaky from '../assets/peaky.png'
-import aftersun from '../assets/aftersun.jpeg'
-import bleu from '../assets/bleu.jpeg'
-import love from '../assets/love.jpeg'
+import Interstellar from '../assets/Interstellar.jpeg'
 import { FaPlay } from 'react-icons/fa'
 import {AiOutlineInfoCircle} from  'react-icons/ai'
 import styled from 'styled-components'
@@ -29,7 +27,17 @@ export default function Netflix() {
   const genresLoaded=useSelector((state)=>state.netflix.genresLoaded)
   const movies=useSelector((state)=>state.netflix.movies)
 
+  const [fontSize, setFontSize] = useState(1);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFontSize(0.8);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
  
 
   useEffect(()=>{
@@ -65,7 +73,7 @@ export default function Netflix() {
 
   const afterSun=()=>{
     const payload = {
-      id: 965150,
+      id: 157336,
       movieType: "movie"
   };
     dispatch(getTrailer(payload))
@@ -76,20 +84,20 @@ export default function Netflix() {
 
 
   return (
-    <Container>
+    <Container fontSize={fontSize}>
         <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}/> 
         
          {
           isData?
           <Search data={data}/>:(
           <>         
-          <div className="hero">
-         <img src={bleu} alt="background" 
+        <div className="hero">
+         <img src={Interstellar} alt="background" 
           className='background-image'
          />
          <div className="container">
           <div className="logo">
-            <p>Blue</p>
+            <p>Interstellar</p>
           </div>
           <div className="buttons flex">
             <button className='flex j-center a-center' onClick={()=>afterSun()}><FaPlay/>Play</button> 
@@ -110,28 +118,33 @@ export default function Netflix() {
 
 const Container=styled.div`
    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap');
-
+   z-index:7;  
    background-color:black;
+   position:relative;
    .hero{
-    position:relative;
+   
     .background-image{
-      filter:brightness(40%);
+      filter:brightness(60%) ;
+      
      
     }
     img{
-      height:100vh;
-      width:100vw;
+      ${'' /* height:100vw; */}
+      width:100%;
+      height:100%;
+      min-height:350px;
       object-fit:cover;
     }
     .container{
       position:absolute;
-      bottom:5rem;
+      top:20rem;
       left:1.5rem;
+
       .logo{
         margin-left:3rem;
         p{
-          font-size:100px;
-    
+          font-size: ${props => props.fontSize * 130}px;
+          transition: font-size 1s ease-in-out;
           font-family: 'Cormorant Garamond', serif;
           
         }
@@ -141,6 +154,7 @@ const Container=styled.div`
         gap:2rem;
         button{
         font-size:1.2rem;
+        font-weight:600;
         gap:1rem;
         border-radius:0.2rem;
         padding:0.5rem;
@@ -166,6 +180,94 @@ const Container=styled.div`
       }
     }
    }
+
+
+  
+
+
+
+@media (max-width: 1200px) {
+  .hero{
+      .container{
+        top:15rem;
+    }
+    }
+    
+  }
+
+  @media (max-width: 900px) {
+    .hero{
+      .container{
+        top:9rem;
+        .logo{
+        p{
+          font-size: ${props => props.fontSize * 100}px;
+        }
+      }
+      .buttons{
+        margin:2rem 3rem;
+        gap:1.5rem;
+        button{
+        font-size:1rem;
+        font-weight:600;
+        gap:0.8rem;
+        padding:0.3rem;
+        padding-left:1.6rem;
+        padding-right:2rem;
+      } 
+      }
+      
+    }
+   
+    
+  }
+
+  @media (max-width: 650px) {
+    .hero{
+      .container{
+        top:6rem;
+        .logo{
+          p{
+          font-size: ${props => props.fontSize * 75}px;
+        }
+      }
+      .buttons{
+        margin:1.5rem 3rem;
+        gap:1rem;
+        button{
+        font-size:0.8rem;
+        font-weight:600;
+        gap:0.5rem;
+        border-radius:0.2rem;
+        padding:0.2rem;
+        padding-left:1.4rem;
+        padding-right:1.5rem;
+      } 
+      }
+
+      }
+
+    }
+   
+    
+  }
+
+  @media (max-width: 450px) {
+    .hero{
+      .container{
+    
+        .logo{
+          margin-left:2rem;
+          p{
+          font-size: ${props => props.fontSize * 65}px;
+        }
+      }
+      .buttons{
+        margin:2rem;
+      
+      }
+
+  }
 
 
 `

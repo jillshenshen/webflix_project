@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Background from '../components/Background.js'
 import Header from '../components/Header.js'
 import { app } from '../utils/firebase-config.js'
 import 'firebase/compat/auth'
+import { AppContext } from "../App.js";
 
 
 export default function Login(){
@@ -15,6 +16,7 @@ export default function Login(){
    email:"",
    password:"",
   }) 
+  const {setEmail } = useContext(AppContext);
 
 
   const handleLogIn=async()=>{
@@ -26,11 +28,13 @@ export default function Login(){
       setError(true)
       console.log(error.code)
       if(error.code==="auth/invalid-email" || error.code==="auth/user-not-found" ){
-        setErrorMsg("Not found this email,please sign up first")
+        setErrorMsg("Sorry, we can't find an account with this email address. Please try again or  create a new account.")
     }else if(error.code==="auth/wrong-password"){
-      setErrorMsg("Wrong password")
+      setErrorMsg("Wrong password.Please try again.")
+      }else if(error.code==="auth/too-many-requests"){
+        setErrorMsg("Login failed too many times.Please try again in ten minutes.")
       }else{
-        setErrorMsg("Login failed")
+        setErrorMsg("Login failed.Please try again.")
       }
     }
   }
@@ -38,6 +42,7 @@ export default function Login(){
   app.auth().onAuthStateChanged(function(user) {
    //這裡會印出User的資訊
    if (user) {
+      setEmail(user.email)
       navigate("/")
      // User is signed in.
    }})
@@ -63,7 +68,7 @@ export default function Login(){
                     value={formValue.password} onChange={(e)=>setFormValue({...formValue,[e.target.name]:e.target.value})}
 
                     />
-                      {error? <p className='error'>Error: 
+                      {error? <p className='error'>
                   <span>   {errorMsg}</span></p>:""}
                   <button onClick={handleLogIn}>Log In</button>
                 </div>
@@ -104,9 +109,12 @@ position:relative;
     
 
         .error{
-          color:#e50914;
-          padding:0 1rem;
-      
+          color:#fff;
+          padding:0.5rem 1rem;
+          background-color:#e87c03;
+          width:15rem;
+          border-radius:0.2rem;
+          
         }
        
         .container{
