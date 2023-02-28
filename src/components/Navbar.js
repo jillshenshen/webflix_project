@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 import { getSearch } from '../store/index.js'
 
 
-export default function Navbar({isScrolled,setData,setIsData,data}) {
+export default function Navbar({isScrolled,setData,setIsData,data,setClickHome,setSelectList,setSelectTv}) {
   const dispatch=useDispatch();
   const navigate= useNavigate()
   const links=[
@@ -47,7 +47,19 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
   }, [showSearch]);
 
  
-  const handleClick = () => {
+  const handleClick = (name) => {
+    if(name==="Home"){
+       setClickHome(true)
+    }else{
+      setClickHome(false)
+    }  
+
+    if(name==="Movies"){
+      setSelectList("")
+    }
+    if(name==="TV Shows"){
+      setSelectTv("")
+    }
     setIsData(false);
     setShowSearch(false);
     setData("");
@@ -59,6 +71,7 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
   };
 
   const handleClose=()=>{
+   
     setShowSearch(false);
     setInputHover(false);
     setData("")
@@ -92,7 +105,7 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
                 return(
                   <li key={name}><Link to={link}  onClick={e => {  
                   
-                    handleClick() }}>{name}</Link></li>
+                    handleClick(name) }}>{name}</Link></li>
                 )
 
              })}
@@ -152,7 +165,7 @@ export default function Navbar({isScrolled,setData,setIsData,data}) {
                 return(
                   <li key={name} ><Link to={link}  onClick={e => {  
                   
-                  handleClick() }}>{name}</Link></li>
+                  handleClick(name) }}>{name}</Link></li>
                 )
 
              })}
@@ -191,8 +204,8 @@ const Container=styled.div`
       .brand{
        
         img{
-          height:10rem;
-          margin-top:0.5rem;
+         width:10rem;
+         
 
         }
       }
@@ -360,8 +373,8 @@ const Container=styled.div`
     }
     .logo-img{
       content: url(${w});
-      width:70%;
-      height:50%;
+      max-width:30%;
+
       
       
     }

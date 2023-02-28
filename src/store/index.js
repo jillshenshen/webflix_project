@@ -7,6 +7,7 @@ const initialState={
     movies:[],
     genresLoaded:false,
     genres:[],
+    tvGenres:[],
     trailer:"",
     search:[],
     
@@ -61,7 +62,15 @@ export const getGenres=createAsyncThunk('netflix/genres',async()=>{
 })
 
 
-const createArrayFromRawData=(array,movieArray,genres)=>{
+export const getTvGenres=createAsyncThunk('netflix/tvGenres',async()=>{
+
+    const {data:{genres}}=await axios.get(`${TMDB_BASE_URL}/genre/tv/list?api_key=${API_KEY}`)
+      
+    return genres;
+})
+
+
+const createArrayFromRawData=(array,movieArray,genres,type)=>{
    array.forEach((movie)=>{
      
       const movieGenres=[];
@@ -75,27 +84,27 @@ const createArrayFromRawData=(array,movieArray,genres)=>{
             name:movie.original_name?movie.original_name:movie.original_title,
             image:movie.backdrop_path,
             genres:movieGenres.slice(0,3),
-            type:movie.media_type
+            type:movie.media_type?movie.media_type:type
         })
-      } 
+      }
    })
 }
 
 
 
-const getRawData=async(api,genres,paging)=>{
+const getRawData=async(api,genres,paging,type)=>{
     const movieArray=[];
     for(let i=1;movieArray.length<120&&i<20;i++){
         const {data:{results}}=await axios.get(`${api}${paging?`&page=${i}`:""}`)
 
-        createArrayFromRawData(results,movieArray,genres);
+        createArrayFromRawData(results,movieArray,genres,type);
        
     }
     return movieArray;
 }
 
 export const fetchMovies=createAsyncThunk('netflix/trending',async({type},thunkApi)=>{
-
+   const {netflix:{tvGenres}}=thunkApi.getState();
    const {netflix:{genres}}=thunkApi.getState();
    return  getRawData(
     `${TMDB_BASE_URL}/trending/${type}/week?api_key=${API_KEY}`,
@@ -104,6 +113,20 @@ export const fetchMovies=createAsyncThunk('netflix/trending',async({type},thunkA
    )
    
 })
+
+export const fetchDataByGenre=createAsyncThunk('netflix/moviesByGenre',async({genre,type},thunkApi)=>{
+   
+    const {netflix:{genres}}=thunkApi.getState();
+  
+    return  getRawData(
+     `${TMDB_BASE_URL}/discover/${type}?api_key=${API_KEY}&with_genres=${genre}`,
+     genres,
+     true,
+     type,
+     
+    )
+    
+ })
 
 
 
@@ -118,10 +141,22 @@ const NetflixSlice=createSlice({
             state.genres=action.payload;
             state.genresLoaded=true;
         });
+
+        builder.addCase(getTvGenres.fulfilled,(state,action)=>{
+            state.tvGenres=action.payload;
+            state.genresLoaded=true;
+            
+        });
+
         builder.addCase(fetchMovies.fulfilled,(state,action)=>{
             state.movies=action.payload;
            
         });
+        builder.addCase(fetchDataByGenre.fulfilled,(state,action)=>{
+            state.movies=action.payload;
+           
+        });
+
         builder.addCase(getTrailer.fulfilled,(state,action)=>{
             state.trailer=action.payload;
            

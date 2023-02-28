@@ -12,18 +12,18 @@ export default function Slider({movies}) {
 
   return (
     <Container>
-        <CardSlider title="Trending Now" data={getMoviesFromRange(0,20)} style={{ zIndex: 6}} />
-        <CardSlider title="New Release" data={getMoviesFromRange(20,40)} style={{ zIndex: 5}}/>
-        <CardSlider title="BlockBuster Movies" data={getMoviesFromRange(40,60)} style={{ zIndex: 4}}/>
-        <CardSlider title="Popular On Webflix" data={getMoviesFromRange(60,80)} style={{ zIndex: 3}}/>
-        <CardSlider title="Action Movies" data={getMoviesFromRange(80,100)} style={{ zIndex: 2}}/>
-        <CardSlider title="Epics" data={getMoviesFromRange(100,120)} style={{ zIndex: 1}}/>
+        <CardSlider title="Trending Now" data={getMoviesFromRange(0,20)} />
+        <CardSlider title="New Release" data={getMoviesFromRange(20,40)} />
+        <CardSlider title="BlockBuster Movies" data={getMoviesFromRange(40,60)} />
+        <CardSlider title="Popular On Webflix" data={getMoviesFromRange(60,80)}  />
+        <CardSlider title="Action Movies" data={getMoviesFromRange(80,100)} />
+        <CardSlider title="Epics" data={getMoviesFromRange(100,120)} />
      
    
     </Container>
   )
 }
 const Container=styled.div`
- 
+
 
 `

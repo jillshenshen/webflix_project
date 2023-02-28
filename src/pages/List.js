@@ -17,7 +17,7 @@ import {AiOutlineDrag,AiOutlineUnorderedList} from 'react-icons/ai'
 
 
 export default function List() {
-  const { data, setData, isData, setIsData,setIsScrolled,isScrolled ,email} = useContext(AppContext);
+  const { data, setData, isData, setIsData,setIsScrolled,isScrolled ,email,setClickHome} = useContext(AppContext);
   const [show, setShow] = useState(false);
   const [isHovered,setIsHovered]=useState(false)
   const [myList,setMyList]=useState([])
@@ -82,7 +82,9 @@ export default function List() {
 
   return (
     <Container isScrolled={isScrolled}>
-      <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}/>
+      <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}
+      setClickHome={setClickHome}
+      />
       {data?  <Search data={data}/>:
       ( <>  
       <div className='buttons'>

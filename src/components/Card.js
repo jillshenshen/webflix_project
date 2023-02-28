@@ -17,7 +17,6 @@ import { AppContext } from "../App.js";
 export default function Card({movieData}) {
   const [show, setShow] = useState(false);
   const [isHovered,setIsHovered]=useState(false)
-  const [imageNone,setImageNone]=useState(false)
   const navigate=useNavigate()
   const dispatch=useDispatch()
   const youtube_v=useSelector((state)=>state.netflix.trailer)
@@ -25,13 +24,15 @@ export default function Card({movieData}) {
   const [left,setLeft]=useState(0)
   const [right,setRight]=useState(0)
   const [like,setLike]=useState(false)
-  const [saved,setSaved]=useState(false)
+  const [clickInfo,setClickInfo]=useState(false)
  
 
   const { email,setEmail } = useContext(AppContext);
   
   useEffect(()=>{
+   
     if(isHovered){
+      
       const payload = {
         id: movieData.id,
         movieType: movieData.type
@@ -42,12 +43,13 @@ export default function Card({movieData}) {
   
  const timeoutRef = useRef(null);
  const divRef = useRef(null);
- const imageRef=useRef(null)
+
 
  useEffect(() => {
    if (isHovered) {
      timeoutRef.current = setTimeout(() => {
        setShow(true);
+      
      }, 500);
      const distanceFromTop = divRef.current.getBoundingClientRect().top;
      setTop(distanceFromTop);
@@ -59,25 +61,18 @@ export default function Card({movieData}) {
      const viewportWidth = window.innerWidth;
      const distance = viewportWidth - distanceFromRight;
      setRight(distance)
-     console.log(distance)
+   
      
 
 
    } else {
      clearTimeout(timeoutRef.current);
      setShow(false);
+    
    }
  }, [isHovered]);
 
- useEffect(() => {
-  if (show) {
-    imageRef.current = setTimeout(() => {
-      setImageNone(true); 
-    }, 300);
-  } else {
-    setImageNone(false);
-  }
-}, [show]);
+
 
 // let email
 app.auth().onAuthStateChanged(function(user) {
@@ -115,11 +110,12 @@ app.auth().onAuthStateChanged(function(user) {
     onMouseEnter={()=>setIsHovered(true)}
     onMouseLeave={()=>setIsHovered(false)}
     show={show}
+    clickInfo={clickInfo}
     top={top}
     right={right}
     left={left}
     ref={divRef}
-    imageNone={imageNone}
+   
     >
       <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
       />
@@ -127,9 +123,10 @@ app.auth().onAuthStateChanged(function(user) {
         show &&(
             <div className='hover'>
                <div className="image-video-container">
-               <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
+               <div className='img-div'>  <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
                onClick={()=>navigate('/player')}
-                /> 
+                /> </div>
+             
                 <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
              
                </div>
@@ -147,7 +144,7 @@ app.auth().onAuthStateChanged(function(user) {
                       </div>
 
                       <div className="info">
-                        <BiChevronDown title="More info"/>
+                        <BiChevronDown title="More info" onClick={()=>setClickInfo(true)}/>
                       </div>
                    </div>
                    <div className="genres flex">
@@ -167,17 +164,18 @@ app.auth().onAuthStateChanged(function(user) {
 }
 
 const Container=styled.div`
-    --items-per-screen:5;
-    flex-basis: 0 0 calc(100% / var(--items-per-screen));
-  
-    min-width: calc(100% / var(--items-per-screen));
-    aspect-ratio: 16/9;
-    padding:0.2rem;
-    border-radius: 0.5rem;
+  --items-per-screen:5;
+  flex-basis: 0 0 calc(100% / var(--items-per-screen)); 
+  min-width: calc(100% / var(--items-per-screen));
+  aspect-ratio: 16/9;
+  padding:0.2rem;
+  border-radius: 0.5rem;
    cursor:pointer;
    position:relative;
    z-index:${(props)=>(props.show?"99":"")};
    transform: ${(props)=>(props.show?"scale(1.05)":"")};
+  
+  
    img{
     border-radius:0.2rem;
     width:100%;
@@ -195,14 +193,14 @@ const Container=styled.div`
     border-radius:0.3rem;
     box-shadow:rgba(0,0,0,0.75) 0px 3px 10px;
     background-color:#181818;
-    transition:2s ease-in-out;
+  
     
  
     .image-video-container{
         position:relative;
         height:180px;
-        img{
-             display:${(props)=>(props.imageNone?'none':'block')};
+        .img-div{
+            padding:0.5px;
             width:100%;
             height:180px;
             object-fit:cover;
@@ -213,9 +211,15 @@ const Container=styled.div`
             z-index:4;
             position:absolute;
         }
+        img{
+         
+            width:100%;
+            height:100%;
+           
+        }
         video,iframe{
             width:100%;
-            height:182px;
+            height:180px;
             object-fit:cover;
             border-radius:0.3rem;
             border-bottom-right-radius: 0;
@@ -227,10 +231,12 @@ const Container=styled.div`
         }
     }
     .info-container{
+       
         padding:1rem;
         gap:0.5rem;
     }
     .icons{
+      
         .controls{
             display:flex;
             gap:1rem;
@@ -257,7 +263,7 @@ const Container=styled.div`
     }
    }
    transition: all 0.2s ease-in-out;
-
+  
 
    @media (max-width: 1200px) {
     

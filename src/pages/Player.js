@@ -13,7 +13,7 @@ export default function Player() {
     <Container>
        <div className="player">
         <div className="back">
-            <BsArrowLeft onClick={()=> navigate(-1)}/>
+            <BsArrowLeft onClick={() => window.history.back()}/>
         </div>
         <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;mute;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
        </div>
@@ -28,7 +28,7 @@ const Container=styled.div`
     height:100vh;
     .back{
         position:absolute;
-        padding-top:3.5rem;
+        padding-top:5rem;
         padding-left:1rem;
         z-index:1;
         svg{

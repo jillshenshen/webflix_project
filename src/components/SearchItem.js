@@ -15,7 +15,6 @@ import 'firebase/compat/auth'
 export default function SearchItem({item}) {
   const [show, setShow] = useState(false);
   const [isHovered,setIsHovered]=useState(false)
-  const [imageNone,setImageNone]=useState(false)
   const [top,setTop]=useState(0)
   const [left,setLeft]=useState(0)
   const [right,setRight]=useState(0)
@@ -62,15 +61,7 @@ export default function SearchItem({item}) {
     }
   }, [isHovered]);
 
-  useEffect(() => {
-    if (show) {
-      imageRef.current = setTimeout(() => {
-        setImageNone(true); 
-      }, 300);
-    } else {
-      setImageNone(false);
-    }
-  }, [show]);
+
 
   const saveShow = async() => {
    
@@ -103,7 +94,7 @@ export default function SearchItem({item}) {
      right={right}
      left={left}
      show={show}
-     imageNone={imageNone}
+    
     > 
     
      <img src={`https://image.tmdb.org/t/p/original${item.image}`} alt="movie" /> 
@@ -115,9 +106,12 @@ export default function SearchItem({item}) {
         show &&(
             <div className='hover'>
                <div className="image-video-container">
-               <img src={`https://image.tmdb.org/t/p/w500${item.image}`} alt="movie" 
+               <div className='img-div'>
+                 <img src={`https://image.tmdb.org/t/p/w500${item.image}`} alt="movie" 
                onClick={()=>navigate('/player')}
-                /> 
+                 /> 
+               </div>
+             
                 <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
              
                </div>
@@ -160,6 +154,7 @@ const Container = styled.div`
   cursor: pointer;
   z-index:${(props)=>(props.show?"99":"")};
   transform: ${(props)=>(props.show?"scale(1.05)":"")};
+  transition: transform 0.3s ease-in-out;
   .hover {
     z-index: 199;
     height: max-content;
@@ -171,26 +166,34 @@ const Container = styled.div`
     border-radius: 0.3rem;
     box-shadow: rgba(0, 0, 0, 0.75) 0px 3px 10px;
     background-color: #181818;
-    transition: 2s ease-in-out;
+    
  
     .image-video-container {
       position: relative;
       height: 180px;
-      overflow: visible;
-      img {
-        display:${(props)=>(props.imageNone?'none':'block')};
+      
+      .img-div{
+        padding:0.5px;
         width: 100%;
         height: 180px;
         object-fit: cover;
+        border-radius:0.3rem;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
         top: 0;
         z-index: 4;
         position: absolute;
         left: 0;
       }
+      img {
+        width:100%;
+        height:100%;
+        
+      }
       video,
       iframe {
         width: 100%;
-        height: 182px;
+        height: 180px;
         left: 0;
         object-fit: cover;
         border-radius: 0.3rem;

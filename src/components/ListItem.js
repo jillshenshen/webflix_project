@@ -16,7 +16,6 @@ import 'firebase/compat/auth'
 export default function ListItem({item,myList}) {
   const [show, setShow] = useState(false);
   const [isHovered,setIsHovered]=useState(false)
-  const [imageNone,setImageNone]=useState(false)
   const [top,setTop]=useState(0)
   const [left,setLeft]=useState(0)
   const [right,setRight]=useState(0)
@@ -37,7 +36,6 @@ export default function ListItem({item,myList}) {
   },[isHovered])
 
   const timeoutRef = useRef(null);
-  const imageRef=useRef(null)
   const divRef = useRef(null);
 
   useEffect(() => {
@@ -65,15 +63,7 @@ export default function ListItem({item,myList}) {
     }
   }, [isHovered]);
 
-  useEffect(() => {
-    if (show) {
-      imageRef.current = setTimeout(() => {
-        setImageNone(true); 
-      }, 300);
-    } else {
-      setImageNone(false);
-    }
-  }, [show]);
+
 
 
 
@@ -104,7 +94,7 @@ export default function ListItem({item,myList}) {
      left={left}
      show={show}
      isHovered={isHovered}
-     imageNone={imageNone}
+  
    
     > 
     
@@ -117,9 +107,12 @@ export default function ListItem({item,myList}) {
         show &&(
             <div className='hover'>
                <div className="image-video-container">
-               <img src={`https://image.tmdb.org/t/p/w500${item.image}`} alt="movie" 
-               onClick={()=>navigate('/player')}
-                /> 
+               <div className='img-div'>
+                  <img src={`https://image.tmdb.org/t/p/w500${item.image}`} alt="movie" 
+                  onClick={()=>navigate('/player')}
+                   /> 
+               </div>
+             
                 <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
              
                </div>
@@ -179,25 +172,30 @@ const Container = styled.div`
     .image-video-container {
       position: relative;
       height: 180px;
-  
-      img {
-        display:${(props)=>(props.imageNone?'none':'block')};
+      .img-div{
+        padding:0.5px;
         width: 100%;
         height: 180px;
         object-fit: cover;
-        border-radius:1rem;
+        border-radius:0.3rem;
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
         top: 0;
         z-index: 4;
         position: absolute;
-        left: 0;
+        left: 0; 
+      }
+      img {
+        width:100%;
+        height:100%;
+       
+       
       }
       video,
       iframe {
         
         width: 100%;
-        height: 182px;
+        height: 180px;
         left: 0;
         object-fit: cover;
         border-radius: 0.3rem;

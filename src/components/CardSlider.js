@@ -1,24 +1,32 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect,useContext } from 'react'
 import Card from './Card'
 import styled from 'styled-components'
 import { useRef } from 'react';
-import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+
+import { AppContext } from "../App.js";
 
 
-export default function CardSlider({data,title,style}) {
+export default function CardSlider({data,title}) {
+  const { clickHome } = useContext(AppContext);
    const [load,setLoad]=useState(false)
    const [showControls,setShowControls]=useState(false) 
    const [sliderIndex, setSliderIndex] = useState(0);
    const [numItems, setNumItems] = useState(4);
-   const [show, setShow] = useState(false);
-   const [isHovered,setIsHovered]=useState(false)
-   const listRef=useRef();
+  
+  const listRef=useRef();
+
+
 
   useEffect(()=>{
-    setTimeout(() => {
-      setLoad(true);
-    }, 300);
 
+    const timer = setTimeout(() => {
+      setLoad(true);
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  
 
   },[]) 
 
@@ -85,17 +93,6 @@ export default function CardSlider({data,title,style}) {
     setSliderIndex(numItems-1)
   }
 
-  const timeoutRef = useRef(null);
-   useEffect(() => {
-   if (isHovered) {
-     timeoutRef.current = setTimeout(() => {
-       setShow(true);
-     }, 300);
-   } else {
-     clearTimeout(timeoutRef.current);
-     setShow(false);
-   }
- }, [isHovered]);
 
  
  
@@ -107,11 +104,15 @@ export default function CardSlider({data,title,style}) {
       onMouseEnter={()=>setShowControls(true)}
       onMouseLeave={()=>setShowControls(false)}
       sliderIndex={sliderIndex}
-      style={style}
+      showControls={showControls}
     >   
        
        <div className="header">
+            {clickHome?  
             <h3 className='title'>{load?title:''}</h3>
+            : <h3 className='title'>{title}</h3>}
+          
+           
             <div className={`${!showControls?'none':'progress-bar' }`}>
             {items}
               
@@ -119,13 +120,13 @@ export default function CardSlider({data,title,style}) {
        </div>
 
       <div className="container">
-             <button className='handle left-handle'  onClick={()=>handleDirection('left')}>
+            <button className='handle left-handle'  onClick={()=>handleDirection('left')}>
                 <div className={`${!showControls?'none':'text' }`} >&#8249;</div></button>
 
            <div className="slider">
       
            {data.map((movieData,index)=>{
-            return <Card movieData={movieData}/>         
+            return <Card movieData={movieData} key={index} />         
           })}    
            </div>
 
@@ -141,11 +142,12 @@ export default function CardSlider({data,title,style}) {
 }
 
 const Container=styled.div`
+  z-index: ${props => props.showControls? "10" : ""};
   gap:1rem;
   position:relative;
   padding:1rem 0;
   box-sizing:border-box;
-  margin-bottom:2.2rem;
+  margin-bottom:1.5rem;
 .container{
  display: flex;
 
@@ -163,7 +165,6 @@ const Container=styled.div`
 
 .handle{
     border: none;
-    border-radius: 0.3rem;
     width:3rem;
     flex-grow: 0;
     background-color: rgba(0, 0, 0, 0.8);

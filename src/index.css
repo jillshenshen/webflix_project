@@ -30,7 +30,8 @@ body::-webkit-scrollbar{
 
 .column{
     flex-direction: column;
-    
+   
+   
 }
 
 .j-between{
@@ -43,6 +44,7 @@ body::-webkit-scrollbar{
 
 .a-center{
     align-items: center;
+    
 }
 
 

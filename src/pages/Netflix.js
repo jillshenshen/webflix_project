@@ -1,7 +1,5 @@
 import React, { useState ,useContext} from 'react'
 import Navbar from  '../components/Navbar.js'
-import home from '../assets/home.jpg'
-import peaky from '../assets/peaky.png'
 import Interstellar from '../assets/Interstellar.jpeg'
 import { FaPlay } from 'react-icons/fa'
 import {AiOutlineInfoCircle} from  'react-icons/ai'
@@ -13,13 +11,12 @@ import { useEffect } from 'react'
 import { fetchMovies, getGenres} from '../store/index.js'
 import Slider from '../components/Slider.js'
 import Search from '../components/Search.js'
-import { RiContactsBookUploadLine } from 'react-icons/ri'
 import { AppContext } from "../App.js";
 
 export default function Netflix() {
 
   
-  const { data, setData, isData, setIsData,setIsScrolled,isScrolled } = useContext(AppContext);
+  const { data, setData, isData, setIsData,setIsScrolled,isScrolled,setClickHome } = useContext(AppContext);
 
   const navigate=useNavigate()  
   const dispatch=useDispatch()
@@ -42,6 +39,8 @@ export default function Netflix() {
 
   useEffect(()=>{
      dispatch(getGenres())
+   
+     setClickHome(true)
   },[])
 
 
@@ -59,7 +58,7 @@ export default function Netflix() {
 
 
   const handleSubmitData = () => {
-    console.log(data)
+  
     setIsData(true) 
   };
    
@@ -85,7 +84,9 @@ export default function Netflix() {
 
   return (
     <Container fontSize={fontSize}>
-        <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}/> 
+        <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}
+        setClickHome={setClickHome}
+        /> 
         
          {
           isData?

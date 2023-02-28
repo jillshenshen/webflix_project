@@ -28,7 +28,7 @@ const Container=styled.div`
 
  .logo{
     img{
-        height:12rem;
+        width:10rem;
        
     }
  }
