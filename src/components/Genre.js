@@ -28,11 +28,7 @@ const handleClick = (e) => {
         setTvLoading(false);
       }, 2000);
     }
-   
- 
-    
-   
-    // do something with the genre name
+  
   }
 
 function toggleTypeList() {
@@ -139,6 +135,8 @@ const Container=styled.div`
     transition: visibility 0s, opacity 0.5s;
    }
   
-
+   @media (max-width: 650px) {
+    margin-left:0;
+   }
 
 `

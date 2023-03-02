@@ -14,12 +14,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { FaPlay } from 'react-icons/fa'
 import {AiOutlineInfoCircle} from  'react-icons/ai'
 import Genre from '../components/Genre.js';
-
-
+import Info from '../components/Info.js'
+import { homeInfo} from '../store/index.js'
 
 
 export default function Movies() {
-  const { data, setData, isData, setIsData,setIsScrolled,isScrolled ,setClickHome} = useContext(AppContext);
+  const { data, setData, isData, setIsData,setIsScrolled,isScrolled ,setClickHome,clickInfo,setClickInfo} = useContext(AppContext);
   const navigate=useNavigate()  
   const dispatch=useDispatch()
   const genresLoaded=useSelector((state)=>state.netflix.genresLoaded)
@@ -30,6 +30,7 @@ export default function Movies() {
   const [fontSize, setFontSize] = useState(1);
   const [selectList,setSelectList]=useState("");
   const [loading,setLoading]=useState(false)
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -94,6 +95,15 @@ useEffect(()=>{
   navigate('/player')
 
 }
+const getInfo=()=>{
+   
+  const payload = {
+    id: 27205,
+    movieType: "movie"
+};
+ dispatch(homeInfo(payload)) 
+ setClickInfo(true)
+}
 
 
   return (
@@ -106,12 +116,19 @@ useEffect(()=>{
 
       {
         isData? 
-        <Search data={data}/>:
+        <>
+        {clickInfo && <Info setClickInfo={setClickInfo} />}
+        
+        <Search data={data}/>
+        </>
+        :
         selectList!=""?
         
         loading?
         <Skeleton/>:
 
+        <>
+        {clickInfo && <Info setClickInfo={setClickInfo} />}
         <div className="selectList">
         <div className='selectTitle'>
           <h1 className='movieH1' onClick={()=>setSelectList("")}>Movies &gt;</h1>
@@ -121,13 +138,13 @@ useEffect(()=>{
         <Slider movies={movies}/>
         </div>
       
-
+        </>
 
        :
 
         (
         <>
-       
+        {clickInfo && <Info setClickInfo={setClickInfo} />}
         <div className="hero">
          <img src={inception} alt="background" 
           className='background-image'
@@ -139,7 +156,7 @@ useEffect(()=>{
           </div>
           <div className="buttons flex">
             <button className='flex j-center a-center' onClick={()=>afterSun()}><FaPlay/>Play</button> 
-            <button className='flex j-center a-center'><AiOutlineInfoCircle/>More Info</button> 
+            <button className='flex j-center a-center'  onClick={()=>getInfo()}><AiOutlineInfoCircle/>More Info</button> 
           </div>
          </div>
         </div>
@@ -169,6 +186,9 @@ useEffect(()=>{
 }
 
 const Container=styled.div`
+   z-index:7;  
+   background-color:black;
+   position:relative;
   .hero{
    
    .background-image{
@@ -180,7 +200,7 @@ const Container=styled.div`
      ${'' /* height:100vw; */}
      width:100%;
      height:100%;
-     min-height:350px;
+     min-height:400px;
      object-fit:cover;
    }
    .container{
@@ -260,7 +280,7 @@ const Container=styled.div`
   @media (max-width: 1200px) {
   .hero{
       .container{
-        top:15rem;
+        top:13rem;
     }
     }
     
@@ -296,7 +316,7 @@ const Container=styled.div`
   @media (max-width: 650px) {
     .hero{
       .container{
-        top:6rem;
+        top:12rem;
         .logo{
           p{
           font-size: ${props => props.fontSize * 75}px;
@@ -319,6 +339,11 @@ const Container=styled.div`
       }
 
     }
+    .genres-list{
+      top:4rem;
+      display:block;
+      margin-left:2rem;
+    }
    
     
   }
@@ -338,7 +363,10 @@ const Container=styled.div`
       
       }
 
-  }
+  }}
+  .genres-list{
+      margin-left:1rem;
+    }
 
   
 `

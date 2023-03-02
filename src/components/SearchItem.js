@@ -11,6 +11,8 @@ import { AppContext } from "../App.js";
 import { arrayUnion,doc,updateDoc } from 'firebase/firestore'
 import {db,app} from '../utils/firebase-config'
 import 'firebase/compat/auth'
+import { homeInfo} from '../store/index.js'
+
 
 export default function SearchItem({item}) {
   const [show, setShow] = useState(false);
@@ -22,7 +24,7 @@ export default function SearchItem({item}) {
   const dispatch=useDispatch()
   const youtube_v=useSelector((state)=>state.netflix.trailer)
   const [like,setLike]=useState(false)
-  const { email } = useContext(AppContext);
+  const { email,clickInfo,setClickInfo } = useContext(AppContext);
 
   useEffect(()=>{
     if(isHovered){
@@ -81,6 +83,21 @@ export default function SearchItem({item}) {
     }) 
 }
 
+const getInfo=()=>{
+   
+  const payload = {
+    id: item.id,
+    movieType: item.type
+};
+ dispatch(homeInfo(payload)) 
+
+ setTimeout(() => {
+    setClickInfo(true);
+  }, 500);
+
+
+}
+
 
   
 
@@ -128,7 +145,7 @@ export default function SearchItem({item}) {
                       </div>
 
                       <div className="info">
-                        <BiChevronDown title="More info"/>
+                        <BiChevronDown title="More info" onClick={()=>getInfo()} />
                       </div>
                    </div>
                    <div className="genres flex">

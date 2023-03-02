@@ -13,6 +13,8 @@ import { arrayUnion,doc,updateDoc } from 'firebase/firestore'
 import {db,app} from '../utils/firebase-config'
 import 'firebase/compat/auth'
 import { AppContext } from "../App.js";
+import { homeInfo} from '../store/index.js'
+
 
 export default function Card({movieData}) {
   const [show, setShow] = useState(false);
@@ -24,10 +26,7 @@ export default function Card({movieData}) {
   const [left,setLeft]=useState(0)
   const [right,setRight]=useState(0)
   const [like,setLike]=useState(false)
-  const [clickInfo,setClickInfo]=useState(false)
- 
-
-  const { email,setEmail } = useContext(AppContext);
+  const { email,setEmail,clickInfo,setClickInfo } = useContext(AppContext);
   
   useEffect(()=>{
    
@@ -102,6 +101,21 @@ app.auth().onAuthStateChanged(function(user) {
         }) 
  }
 
+ const getInfo=()=>{
+   
+  const payload = {
+    id: movieData.id,
+    movieType: movieData.type
+};
+ dispatch(homeInfo(payload)) 
+
+ setTimeout(() => {
+    setClickInfo(true);
+  }, 500);
+
+
+}
+
 
 
 
@@ -123,18 +137,23 @@ app.auth().onAuthStateChanged(function(user) {
         show &&(
             <div className='hover'>
                <div className="image-video-container">
-               <div className='img-div'>  <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
+               <div className='img-div'> <img src={`https://image.tmdb.org/t/p/w500${movieData.image}`} alt="movie" 
                onClick={()=>navigate('/player')}
                 /> </div>
-             
-                <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+               
+                
+                {youtube_v?
+                  <iframe src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`} allow="accelerometer;autoplay;clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>:
+                  <h2>No video</h2>
+                }
+                
              
                </div>
                <div className="info-container flex column">
-                   <h3 className='name' onClick={()=>navigate('/player')}>{movieData.name}</h3>
+                   <h3 className='name'>{movieData.name}</h3>
                    <div className="icons flex j-between">
                       <div className="controls flex">
-                         <IoPlayCircleSharp title="play" onClick={()=>navigate('/player')}/>
+                      {youtube_v && <IoPlayCircleSharp title="play" onClick={() => navigate("/player")} />}
 
                          <p onClick={saveShow}>
                          {like?<BsCheck/>:  <AiOutlinePlus title="Add to my list" />}
@@ -144,7 +163,7 @@ app.auth().onAuthStateChanged(function(user) {
                       </div>
 
                       <div className="info">
-                        <BiChevronDown title="More info" onClick={()=>setClickInfo(true)}/>
+                        <BiChevronDown title="More info"  onClick={()=>getInfo()}/>
                       </div>
                    </div>
                    <div className="genres flex">
@@ -199,6 +218,7 @@ const Container=styled.div`
     .image-video-container{
         position:relative;
         height:180px;
+     
         .img-div{
             padding:0.5px;
             width:100%;
@@ -210,6 +230,7 @@ const Container=styled.div`
             top:0;
             z-index:4;
             position:absolute;
+           
         }
         img{
          
@@ -228,6 +249,15 @@ const Container=styled.div`
             z-index:5;
             position:absolute;
             border: none;
+        }
+        h2{
+          position:absolute;
+          z-index:5;
+          right:1rem;
+          bottom:1rem;
+          background-color:rgba(0,0,0,0.7);
+          padding:0.3rem 0.6rem;
+         
         }
     }
     .info-container{

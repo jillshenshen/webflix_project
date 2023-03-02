@@ -16,10 +16,11 @@ function App() {
   const [isData,setIsData]=useState(false)
   const [clickHome,setClickHome]=useState(false)
   const [email,setEmail]=useState("")
+  const [clickInfo,setClickInfo]=useState(false);
 
     return (
       <div>
-       <AppContext.Provider value={{ data, setData, isData, setIsData,isScrolled,setIsScrolled,email,setEmail ,clickHome,setClickHome}}>
+       <AppContext.Provider value={{ data, setData, isData, setIsData,isScrolled,setIsScrolled,email,setEmail ,clickHome,setClickHome,clickInfo,setClickInfo}}>
        <Routes>
         <Route exact path="/login" element={<Login/>} />     
         <Route exact path="/signup" element={<Signup/>}/> 

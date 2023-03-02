@@ -9,6 +9,8 @@ import { useSelector } from 'react-redux'
 export default function Player() {
   const navigate=useNavigate()  
   const youtube_v=useSelector((state)=>state.netflix.trailer)
+
+  
   return (
     <Container>
        <div className="player">

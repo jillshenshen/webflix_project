@@ -1,15 +1,14 @@
 import React from 'react'
-import { useEffect,useState } from 'react'
+import { useEffect } from 'react'
 import { getSearch } from '../store/index.js'
 import { useDispatch,useSelector} from 'react-redux'
 import styled from 'styled-components'
 import SearchItem from './SearchItem.js'
-import Card from './Card.js'
+
 
 
 export default function Search({data}) {
-  // const [show, setShow] = useState(false);
-  // const [isHovered,setIsHovered]=useState(false)
+
   const dispatch=useDispatch()
   const searchArray=useSelector((state)=>state.netflix.search)
   
@@ -23,12 +22,11 @@ export default function Search({data}) {
 
   return (
     <Container>
-    
+  
     {searchArray.map((item,index)=>{
        return (
        <div className='img-div'
-        // onMouseEnter={()=>setIsHovered(true)}
-        // onMouseLeave={()=>setIsHovered(false)}
+       
        >
        <SearchItem item={item}/>
      

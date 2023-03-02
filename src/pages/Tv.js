@@ -14,12 +14,13 @@ import { FaPlay } from 'react-icons/fa'
 import {AiOutlineInfoCircle} from  'react-icons/ai'
 import Genre from '../components/Genre.js';
 import Skeleton from '../components/Skeleton.js';
-
+import Info from '../components/Info.js'
+import { homeInfo} from '../store/index.js'
 
 
 
 export default function Movies() {
-  const { data, setData, isData, setIsData,setIsScrolled,isScrolled ,setClickHome} = useContext(AppContext);
+  const { data, setData, isData, setIsData,setIsScrolled,isScrolled ,setClickHome,clickInfo,setClickInfo} = useContext(AppContext);
   const navigate=useNavigate()  
   const dispatch=useDispatch()
   const genresLoaded=useSelector((state)=>state.netflix.genresLoaded)
@@ -29,7 +30,8 @@ export default function Movies() {
   const [fontSize, setFontSize] = useState(1);
   const [selectTv,setSelectTv]=useState("");
   const [tvLoading,setTvLoading]=useState(false)
-  
+
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setFontSize(0.8);
@@ -93,6 +95,16 @@ useEffect(()=>{
 
 }
 
+const getInfo=()=>{
+   
+  const payload = {
+    id:19885,
+    movieType: "tv"
+};
+ dispatch(homeInfo(payload)) 
+ setClickInfo(true)
+}
+
   return (
     <Container fontSize={fontSize}>
       <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}
@@ -102,12 +114,20 @@ useEffect(()=>{
 
       {
         isData? 
-        <Search data={data}/>:
+        <>
+        {clickInfo && <Info setClickInfo={setClickInfo} />}
+        
+        <Search data={data}/>
+        </>
+        
+        
+        :
         selectTv!=""?
         
         tvLoading?
         <Skeleton/>:
-
+        <>
+        {clickInfo && <Info setClickInfo={setClickInfo} />}
         <div className="selectList">
         <div className='selectTitle'>
           <h1 className='movieH1' onClick={()=>setSelectTv("")}>TV Shows &gt;</h1>
@@ -117,10 +137,12 @@ useEffect(()=>{
         <Slider movies={movies}/>
         </div>
 
+        </>
         :
 
         (
         <>
+        {clickInfo && <Info setClickInfo={setClickInfo} />}
        
         <div className="hero">
          <img src={sherlock} alt="background" 
@@ -133,7 +155,7 @@ useEffect(()=>{
           </div>
           <div className="buttons flex">
             <button className='flex j-center a-center' onClick={()=>afterSun()}><FaPlay/>Play</button> 
-            <button className='flex j-center a-center'><AiOutlineInfoCircle/>More Info</button> 
+            <button className='flex j-center a-center' onClick={()=>getInfo()}><AiOutlineInfoCircle/>More Info</button> 
           </div>
          </div>
         </div>

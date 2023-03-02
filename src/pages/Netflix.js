@@ -1,4 +1,4 @@
-import React, { useState ,useContext} from 'react'
+import React, { useState ,useContext,useEffect} from 'react'
 import Navbar from  '../components/Navbar.js'
 import Interstellar from '../assets/Interstellar.jpeg'
 import { FaPlay } from 'react-icons/fa'
@@ -7,16 +7,18 @@ import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getTrailer} from '../store/index.js'
-import { useEffect } from 'react'
+import { homeInfo} from '../store/index.js'
 import { fetchMovies, getGenres} from '../store/index.js'
 import Slider from '../components/Slider.js'
 import Search from '../components/Search.js'
 import { AppContext } from "../App.js";
+import Info from '../components/Info.js'
+
 
 export default function Netflix() {
 
   
-  const { data, setData, isData, setIsData,setIsScrolled,isScrolled,setClickHome } = useContext(AppContext);
+  const { data, setData, isData, setIsData,setIsScrolled,isScrolled,setClickHome,clickInfo,setClickInfo } = useContext(AppContext);
 
   const navigate=useNavigate()  
   const dispatch=useDispatch()
@@ -25,6 +27,7 @@ export default function Netflix() {
   const movies=useSelector((state)=>state.netflix.movies)
 
   const [fontSize, setFontSize] = useState(1);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -81,6 +84,16 @@ export default function Netflix() {
 
   }
 
+  const getInfo=()=>{
+   
+    const payload = {
+      id: 157336,
+      movieType: "movie"
+  };
+   dispatch(homeInfo(payload)) 
+   setClickInfo(true)
+  }
+
 
   return (
     <Container fontSize={fontSize}>
@@ -90,8 +103,18 @@ export default function Netflix() {
         
          {
           isData?
-          <Search data={data}/>:(
-          <>         
+          <>
+        {clickInfo && <Info setClickInfo={setClickInfo} />}
+        
+        <Search data={data}/>
+        </>
+        :
+          
+
+
+        (
+          <> 
+          {clickInfo && <Info setClickInfo={setClickInfo} />}
         <div className="hero">
          <img src={Interstellar} alt="background" 
           className='background-image'
@@ -102,12 +125,18 @@ export default function Netflix() {
           </div>
           <div className="buttons flex">
             <button className='flex j-center a-center' onClick={()=>afterSun()}><FaPlay/>Play</button> 
-            <button className='flex j-center a-center'><AiOutlineInfoCircle/>More Info</button> 
+            <button className='flex j-center a-center'
+            onClick={()=>getInfo()}
+            ><AiOutlineInfoCircle/>More Info</button> 
           </div>
          </div>
         </div>
         <Slider movies={movies}/> 
-        </>)
+        </>) 
+
+
+
+
          }
       
       
