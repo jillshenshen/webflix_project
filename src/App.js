@@ -8,19 +8,23 @@ import List from "./pages/List"
 import Movies from "./pages/Movies";
 import Tv from "./pages/Tv";
 
+
 export const AppContext = createContext();
 
 function App() {
   const [isScrolled,setIsScrolled]=useState(false)
   const [data, setData] = useState("");
   const [isData,setIsData]=useState(false)
-  const [clickHome,setClickHome]=useState(false)
   const [email,setEmail]=useState("")
   const [clickInfo,setClickInfo]=useState(false);
+  const [showSearch,setShowSearch]=useState(false)
+  const [clickBack,setClickBack]=useState(false)
+  const [showLogo,setShowLogo]=useState(false)
 
     return (
+     
       <div>
-       <AppContext.Provider value={{ data, setData, isData, setIsData,isScrolled,setIsScrolled,email,setEmail ,clickHome,setClickHome,clickInfo,setClickInfo}}>
+       <AppContext.Provider value={{ data, setData, isData, setIsData,isScrolled,setIsScrolled,email,setEmail,clickInfo,setClickInfo,showSearch,setShowSearch,clickBack,setClickBack,showLogo,setShowLogo}}>
        <Routes>
         <Route exact path="/login" element={<Login/>} />     
         <Route exact path="/signup" element={<Signup/>}/> 
@@ -32,7 +36,7 @@ function App() {
        </Routes>
        </AppContext.Provider>  
       </div>
-     
+    
     );
   }
   

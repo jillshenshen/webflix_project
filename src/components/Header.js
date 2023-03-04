@@ -6,19 +6,22 @@ import styled from 'styled-components'
 
 
 
+
 const Header = (props) => {
-    const navigate= useNavigate()
+  const navigate = useNavigate();
   return (
     <Container>
-       <div className="logo">
-           <img src={logo} alt="logo" />
-       </div>
-       <button onClick={()=>navigate(props.login? "/login" : "/signup")}>{props.login?"Log in" :"Sign up"}</button>
+      <div className="logo">
+        <img src={logo} alt="logo" />
+      </div>
+      <button onClick={() => navigate(props.login ? "/login" : "/signup")}>
+        {props.login ? "Log in" : "Sign up"}
+      </button>
     </Container>
-  )
-}
+  );
+};
 
-const Container=styled.div`
+const Container = styled.div`
 
  display:flex;
  justify-content: space-between;
@@ -49,6 +52,7 @@ const Container=styled.div`
 
 
 
-`
+`;
 
-export default Header
+export default Header;
+

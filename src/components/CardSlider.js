@@ -1,24 +1,16 @@
-import React, { useState,useEffect,useContext } from 'react'
+import React, { useState,useEffect } from 'react'
 import Card from './Card'
 import styled from 'styled-components'
-import { useRef } from 'react';
-
-import { AppContext } from "../App.js";
-
-
-export default function CardSlider({data,title}) {
-  const { clickHome } = useContext(AppContext);
-   const [load,setLoad]=useState(false)
-   const [showControls,setShowControls]=useState(false) 
-   const [sliderIndex, setSliderIndex] = useState(0);
-   const [numItems, setNumItems] = useState(4);
-  
-  const listRef=useRef();
 
 
 
-  useEffect(()=>{
+export default function CardSlider({ data, title }) {
+  const [load, setLoad] = useState(false);
+  const [showControls, setShowControls] = useState(false);
+  const [sliderIndex, setSliderIndex] = useState(0);
+  const [numItems, setNumItems] = useState(4);
 
+  useEffect(() => {
     const timer = setTimeout(() => {
       setLoad(true);
     }, 500);
@@ -26,123 +18,111 @@ export default function CardSlider({data,title}) {
     return () => {
       clearTimeout(timer);
     };
-  
+  }, []);
 
-  },[]) 
-
-
-   const handleDirection=(direction)=>{
-      if(direction==="right") {
-        if(sliderIndex+1>=numItems){
-          setSliderIndex(0)
-        }else{
-          setSliderIndex(sliderIndex + 1)};
-        }
-        
-      if(direction==="left") {
-        if(sliderIndex-1<0){
-          setSliderIndex(numItems-1)
-        }else{
-          setSliderIndex(sliderIndex - 1);
-        }
-
-      }
-   } 
-
-   useEffect(() => {
-    function handleResize() {
-      const width = window.innerWidth;
-     
-      if (width > 1200) {
-        setNumItems(4);
-       
-      } else if (width > 900) {
-        setNumItems(5);
-      
-      } else if (width > 600) {
-        setNumItems(7);
-     
-      } else if (width > 450) {
-        setNumItems(10);
-       
+  const handleDirection = (direction) => {
+    if (direction === "right") {
+      if (sliderIndex + 1 >= numItems) {
+        setSliderIndex(0);
       } else {
-        setNumItems(20);
-       
+        setSliderIndex(sliderIndex + 1);
       }
-   
-
-   
     }
 
-    window.addEventListener('resize', handleResize);
+    if (direction === "left") {
+      if (sliderIndex - 1 < 0) {
+        setSliderIndex(numItems - 1);
+      } else {
+        setSliderIndex(sliderIndex - 1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    function handleResize() {
+      const width = window.innerWidth;
+
+      if (width > 1200) {
+        setNumItems(4);
+      } else if (width > 900) {
+        setNumItems(5);
+      } else if (width > 600) {
+        setNumItems(7);
+      } else if (width > 450) {
+        setNumItems(10);
+      } else {
+        setNumItems(20);
+      }
+    }
+
+    window.addEventListener("resize", handleResize);
     handleResize();
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  
   const items = [];
 
   for (let i = 0; i < numItems; i++) {
-    items.push(<div className={`${i === sliderIndex ? 'progress-item active' : 'progress-item'}`} key={i}></div>);
+    items.push(
+      <div
+        className={`${
+          i === sliderIndex ? "progress-item active" : "progress-item"
+        }`}
+        key={i}
+      ></div>
+    );
   }
 
-  if(sliderIndex>=numItems){
-    setSliderIndex(numItems-1)
+  if (sliderIndex >= numItems) {
+    setSliderIndex(numItems - 1);
   }
 
-
- 
- 
-  
-   
   return (
-    <Container 
-      className='flex column '
-      onMouseEnter={()=>setShowControls(true)}
-      onMouseLeave={()=>setShowControls(false)}
+    <Container
+      className="flex column "
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => setShowControls(false)}
       sliderIndex={sliderIndex}
       showControls={showControls}
-    >   
-       
-       <div className="header">
-            {clickHome?  
-            <h3 className='title'>{load?title:''}</h3>
-            : <h3 className='title'>{title}</h3>}
-          
-           
-            <div className={`${!showControls?'none':'progress-bar' }`}>
-            {items}
-              
-            </div>
-       </div>
+    >
+      <div className="header">
+        <h3 className="title">{title}</h3>
+
+        <div className={`${!showControls ? "none" : "progress-bar"}`}>
+          {items}
+        </div>
+      </div>
 
       <div className="container">
-            <button className='handle left-handle'  onClick={()=>handleDirection('left')}>
-                <div className={`${!showControls?'none':'text' }`} >&#8249;</div></button>
+        <button
+          className="handle left-handle"
+          onClick={() => handleDirection("left")}
+        >
+          <div className={`${!showControls ? "none" : "text"}`}>&#8249;</div>
+        </button>
 
-           <div className="slider">
-      
-           {data.map((movieData,index)=>{
-            return <Card movieData={movieData} key={index} />         
-          })}    
-           </div>
+        <div className="slider">
+          {data.map((movieData, index) => {
+            return <Card movieData={movieData} key={index} />;
+          })}
+        </div>
 
-
-           <button className='handle right-handle' onClick={()=>handleDirection('right')}>
-                <div className={`${!showControls?'none':'text' }`} >&#8250;</div></button>
+        <button
+          className="handle right-handle"
+          onClick={() => handleDirection("right")}
+        >
+          <div className={`${!showControls ? "none" : "text"}`}>&#8250;</div>
+        </button>
       </div>
-       
-
     </Container>
-  
-  )
+  );
 }
 
-const Container=styled.div`
-  z-index: ${props => props.showControls? "10" : ""};
+const Container = styled.div`
+  z-index: ${(props) => (props.showControls ? "10" : "")};
   gap:1rem;
   position:relative;
   padding:1rem 0;
@@ -157,7 +137,7 @@ const Container=styled.div`
     display: flex;
     flex-grow: 1;
     margin:0 .2rem;
-    transform: translateX(calc(${props => props.sliderIndex} * -100%));
+    transform: translateX(calc(${(props) => props.sliderIndex} * -100%));
     transition:transform 550ms ease-in-out;
     
 }
@@ -285,4 +265,5 @@ const Container=styled.div`
   }
 
 
-`
+`;
+

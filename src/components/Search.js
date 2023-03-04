@@ -1,50 +1,29 @@
 import React from 'react'
-import { useEffect } from 'react'
-import { getSearch } from '../store/index.js'
-import { useDispatch,useSelector} from 'react-redux'
+import { useSelector} from 'react-redux'
 import styled from 'styled-components'
 import SearchItem from './SearchItem.js'
 
 
 
-export default function Search({data}) {
 
-  const dispatch=useDispatch()
-  const searchArray=useSelector((state)=>state.netflix.search)
-  
-
-
-  useEffect(()=>{
-    if(data)dispatch(getSearch(data))
- },[data])
-
-  console.log(searchArray)
+export default function Search({ data }) {
+  const searchArray = useSelector((state) => state.netflix.search);
 
   return (
     <Container>
-  
-    {searchArray.map((item,index)=>{
-       return (
-       <div className='img-div'
-       
-       >
-       <SearchItem item={item}/>
-     
-       </div>
-   
-  
-       )
-
-
-    })}
-    
-    
+      {searchArray.length !== 0 &&
+        searchArray.map((item, index) => {
+          return (
+            <div className="img-div" key={index}>
+              <SearchItem item={item} />
+            </div>
+          );
+        })}
     </Container>
-  )
+  );
 }
 
-
-const Container=styled.div`
+const Container = styled.div`
 
   width:90vw;
   box-sizing: border-box;
@@ -84,7 +63,6 @@ const Container=styled.div`
     grid-template-columns: repeat(1, 1fr);
   }
 
+`;
 
 
-
-`

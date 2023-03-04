@@ -16,21 +16,37 @@ import {AiOutlineInfoCircle} from  'react-icons/ai'
 import Genre from '../components/Genre.js';
 import Info from '../components/Info.js'
 import { homeInfo} from '../store/index.js'
+import Loading from '../components/Loading.js'
+import BackImg from '../components/BackImg.js'
+
 
 
 export default function Movies() {
-  const { data, setData, isData, setIsData,setIsScrolled,isScrolled ,setClickHome,clickInfo,setClickInfo} = useContext(AppContext);
-  const navigate=useNavigate()  
-  const dispatch=useDispatch()
-  const genresLoaded=useSelector((state)=>state.netflix.genresLoaded)
-  const movies=useSelector((state)=>state.netflix.movies)
-  const genres=useSelector((state)=>state.netflix.genres)
+  const {
+    data,
+    setData,
+    isData,
+    setIsData,
+    setIsScrolled,
+    isScrolled,
+    setClickHome,
+    clickInfo,
+    setClickInfo,
+    setShowSearch,
+    showSearch,
+    clickBack,
+    setClickBack,
+  } = useContext(AppContext);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
+  const movies = useSelector((state) => state.netflix.movies);
+  const genres = useSelector((state) => state.netflix.genres);
   const [renderMovies, setRenderMovies] = useState(false);
-
   const [fontSize, setFontSize] = useState(1);
-  const [selectList,setSelectList]=useState("");
-  const [loading,setLoading]=useState(false)
-
+  const [selectList, setSelectList] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,162 +58,175 @@ export default function Movies() {
     };
   }, []);
 
-  
+  useEffect(() => {
+    dispatch(getGenres());
+  }, []);
 
+  useEffect(() => {
+    if (genresLoaded) {
+      dispatch(fetchMovies({ type: "movie" }));
 
-  useEffect(()=>{
-    dispatch(getGenres())
- },[])
+      const timer = setTimeout(() => {
+        setRenderMovies(true);
+      }, 300);
 
- useEffect(()=>{
-  if(genresLoaded){
-    dispatch(fetchMovies({type:"movie"}))
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [genresLoaded]);
 
-    const timer = setTimeout(() => {
-      setRenderMovies(true)
-    }, 300);
+  window.onscroll = () => {
+    setIsScrolled(window.pageYOffset === 0 ? false : true);
+    return () => (window.onscroll = null);
+  };
 
-    return () => {
-      clearTimeout(timer);
+  const handleSubmitData = () => {
+    setIsData(true);
+  };
+
+  useEffect(() => {
+    if (data != "") {
+      handleSubmitData();
+    } else {
+      setIsData(false);
+    }
+  }, [data]);
+
+  const afterSun = () => {
+    const payload = {
+      id: 27205,
+      movieType: "movie",
     };
-    
+    dispatch(getTrailer(payload));
+
+    setTimeout(() => {
+      navigate("/player");
+    }, 500);
+  };
+  const getInfo = () => {
+    const payload = {
+      id: 27205,
+      movieType: "movie",
+    };
+    dispatch(homeInfo(payload));
+    setClickInfo(true);
+  };
+  function handleImageLoad() {
+    setImageLoaded(true);
+    setClickBack(false);
   }
-  
-},[genresLoaded])
 
-
-
-window.onscroll=()=>{
-  setIsScrolled(window.pageYOffset===0?false:true)
-  return()=>(window.onscroll=null);
-}
-
-const handleSubmitData = () => {
-  
-  setIsData(true) 
-};
- 
-useEffect(()=>{
-  if(data!=""){
-    handleSubmitData()
-  }else{
-    setIsData(false)
-  }     
- },[data])
-
- const afterSun=()=>{
-  const payload = {
-    id: 27205,
-    movieType: "movie"
-};
-  dispatch(getTrailer(payload))
-
-  navigate('/player')
-
-}
-const getInfo=()=>{
-   
-  const payload = {
-    id: 27205,
-    movieType: "movie"
-};
- dispatch(homeInfo(payload)) 
- setClickInfo(true)
-}
-
+  const clickMovie = () => {
+    setSelectList("");
+    dispatch(fetchMovies({ type: "movie" }));
+  };
 
   return (
     <Container fontSize={fontSize}>
-      <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}
-       setClickHome={setClickHome}
-      setSelectList={setSelectList}
+      {!imageLoaded && !isData && !clickBack && <Loading />}
+
+      <Navbar
+        isScrolled={isScrolled}
+        setData={setData}
+        setIsData={setIsData}
+        data={data}
+        setClickHome={setClickHome}
+        setSelectList={setSelectList}
+        showSearch={showSearch}
+        setShowSearch={setShowSearch}
       />
-    
 
-      {
-        isData? 
+      {isData ? (
         <>
-        {clickInfo && <Info setClickInfo={setClickInfo} />}
-        
-        <Search data={data}/>
+          {clickInfo && <Info setClickInfo={setClickInfo} />}
+
+          <Search data={data} />
         </>
-        :
-        selectList!=""?
-        
-        loading?
-        <Skeleton/>:
+      ) : selectList != "" ? (
+        loading ? (
+          <Skeleton />
+        ) : (
+          <>
+            {clickInfo && <Info setClickInfo={setClickInfo} />}
+            <div className="selectList">
+              <div className="selectTitle">
+                <h1 className="movieH1" onClick={() => clickMovie()}>
+                  Movies &gt;
+                </h1>
+                <h1>{`${selectList}`}</h1>
+              </div>
 
-        <>
-        {clickInfo && <Info setClickInfo={setClickInfo} />}
-        <div className="selectList">
-        <div className='selectTitle'>
-          <h1 className='movieH1' onClick={()=>setSelectList("")}>Movies &gt;</h1>
-          <h1>{`${selectList}`}</h1>
-        </div>
-   
-        <Slider movies={movies}/>
-        </div>
-      
-        </>
-
-       :
-
-        (
-        <>
-        {clickInfo && <Info setClickInfo={setClickInfo} />}
-        <div className="hero">
-         <img src={inception} alt="background" 
-          className='background-image'
-         />
-         <div className="container">
-
-          <div className="logo">
-            <p>Inception</p>
-          </div>
-          <div className="buttons flex">
-            <button className='flex j-center a-center' onClick={()=>afterSun()}><FaPlay/>Play</button> 
-            <button className='flex j-center a-center'  onClick={()=>getInfo()}><AiOutlineInfoCircle/>More Info</button> 
-          </div>
-         </div>
-        </div>
-        <div className='genres-list'>
-        <h1>Movies</h1>
-        <Genre genres={genres} setSelectList={setSelectList} setLoading={setLoading} type="movie"/> 
-        </div>
-       
-        {
-          renderMovies&&
-      <div className="data">
-     
-      
-      <Slider movies={movies}/>
-     
-     
-      </div>
-        }
-    
-        </>
+              <Slider movies={movies} />
+            </div>
+          </>
         )
-      }
-     
-    
+      ) : (
+        <>
+          {clickInfo && <Info setClickInfo={setClickInfo} />}
+          <div className="hero">
+            <img
+              src={inception}
+              alt="background"
+              className="background-image"
+              onLoad={handleImageLoad}
+            />
+            <div className="container">
+              <div className="logo">
+                <p>Inception</p>
+              </div>
+              <div className="buttons flex">
+                <button
+                  className="flex j-center a-center"
+                  onClick={() => afterSun()}
+                >
+                  <FaPlay />
+                  Play
+                </button>
+                <button
+                  className="flex j-center a-center"
+                  onClick={() => getInfo()}
+                >
+                  <AiOutlineInfoCircle />
+                  More Info
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="genres-list">
+            <h1>Movies</h1>
+            <Genre
+              genres={genres}
+              setSelectList={setSelectList}
+              setLoading={setLoading}
+              type="movie"
+            />
+          </div>
+
+          {renderMovies && (
+            <div className="data">
+              <Slider movies={movies} />
+            </div>
+          )}
+        </>
+      )}
     </Container>
-  )
+  );
 }
 
-const Container=styled.div`
+const Container = styled.div`
    z-index:7;  
    background-color:black;
    position:relative;
   .hero{
    
    .background-image{
-     filter:brightness(60%) ;
+     filter:brightness(40%) ;
      
     
    }
    img{
-     ${'' /* height:100vw; */}
+     ${"" /* height:100vw; */}
      width:100%;
      height:100%;
      min-height:400px;
@@ -211,7 +240,7 @@ const Container=styled.div`
      .logo{
        margin-left:3rem;
        p{
-         font-size: ${props => props.fontSize * 130}px;
+         font-size: ${(props) => props.fontSize * 130}px;
          transition: font-size 1s ease-in-out;
          font-family: 'Cormorant Garamond', serif;
          
@@ -292,7 +321,7 @@ const Container=styled.div`
         top:9rem;
         .logo{
         p{
-          font-size: ${props => props.fontSize * 100}px;
+          font-size: ${(props) => props.fontSize * 100}px;
         }
       }
       .buttons{
@@ -319,7 +348,7 @@ const Container=styled.div`
         top:12rem;
         .logo{
           p{
-          font-size: ${props => props.fontSize * 75}px;
+          font-size: ${(props) => props.fontSize * 75}px;
         }
       }
       .buttons{
@@ -355,7 +384,7 @@ const Container=styled.div`
         .logo{
           margin-left:2rem;
           p{
-          font-size: ${props => props.fontSize * 65}px;
+          font-size: ${(props) => props.fontSize * 65}px;
         }
       }
       .buttons{
@@ -369,4 +398,6 @@ const Container=styled.div`
     }
 
   
-`
+`;
+
+

@@ -13,21 +13,33 @@ import Slider from '../components/Slider.js'
 import Search from '../components/Search.js'
 import { AppContext } from "../App.js";
 import Info from '../components/Info.js'
+import Loading from '../components/Loading.js'
 
 
 export default function Netflix() {
+  const {
+    data,
+    setData,
+    isData,
+    setIsData,
+    setIsScrolled,
+    isScrolled,
+    clickInfo,
+    setClickInfo,
+    showSearch,
+    setShowSearch,
+    clickBack,
+    setClickBack,
+    setShowLogo,
+  } = useContext(AppContext);
 
-  
-  const { data, setData, isData, setIsData,setIsScrolled,isScrolled,setClickHome,clickInfo,setClickInfo } = useContext(AppContext);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const navigate=useNavigate()  
-  const dispatch=useDispatch()
-
-  const genresLoaded=useSelector((state)=>state.netflix.genresLoaded)
-  const movies=useSelector((state)=>state.netflix.movies)
-
+  const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
+  const movies = useSelector((state) => state.netflix.movies);
   const [fontSize, setFontSize] = useState(1);
-
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -38,115 +50,116 @@ export default function Netflix() {
       clearTimeout(timer);
     };
   }, []);
- 
 
-  useEffect(()=>{
-     dispatch(getGenres())
-   
-     setClickHome(true)
-  },[])
+  useEffect(() => {
+    dispatch(getGenres());
+  }, []);
 
+  useEffect(() => {
+    if (genresLoaded) dispatch(fetchMovies({ type: "all" }));
+  }, [genresLoaded]);
 
-  
-
-  useEffect(()=>{
-     if(genresLoaded)dispatch(fetchMovies({type:"all"}))
-  },[genresLoaded])
-
-  window.onscroll=()=>{
-    setIsScrolled(window.pageYOffset===0?false:true)
-    return()=>(window.onscroll=null);
-  }
-
-
+  window.onscroll = () => {
+    setIsScrolled(window.pageYOffset === 0 ? false : true);
+    return () => (window.onscroll = null);
+  };
 
   const handleSubmitData = () => {
-  
-    setIsData(true) 
+    setIsData(true);
   };
-   
-  useEffect(()=>{
-    if(data!=""){
-      handleSubmitData()
-    }else{
-      setIsData(false)
-    }     
-   },[data])
 
-  const afterSun=()=>{
+  useEffect(() => {
+    if (data != "") {
+      handleSubmitData();
+    } else {
+      setIsData(false);
+    }
+  }, [data]);
+
+  const afterSun = () => {
     const payload = {
       id: 157336,
-      movieType: "movie"
+      movieType: "movie",
+    };
+    dispatch(getTrailer(payload));
+    setTimeout(() => {
+      navigate("/player");
+    }, 200);
   };
-    dispatch(getTrailer(payload))
 
-    navigate('/player')
-
-  }
-
-  const getInfo=()=>{
-   
+  const getInfo = () => {
     const payload = {
       id: 157336,
-      movieType: "movie"
+      movieType: "movie",
+    };
+    dispatch(homeInfo(payload));
+    setClickInfo(true);
   };
-   dispatch(homeInfo(payload)) 
-   setClickInfo(true)
-  }
 
+  function handleImageLoad() {
+    setImageLoaded(true);
+    setClickBack(false);
+  }
 
   return (
     <Container fontSize={fontSize}>
-        <Navbar isScrolled={isScrolled} setData={setData} setIsData={setIsData} data={data}
-        setClickHome={setClickHome}
-        /> 
-        
-         {
-          isData?
-          <>
-        {clickInfo && <Info setClickInfo={setClickInfo} />}
-        
-        <Search data={data}/>
-        </>
-        :
-          
+      {!imageLoaded && !isData && !clickBack && <Loading />}
 
+      <Navbar
+        isScrolled={isScrolled}
+        setData={setData}
+        setIsData={setIsData}
+        data={data}
+        showSearch={showSearch}
+        setShowSearch={setShowSearch}
+      />
 
-        (
-          <> 
+      {isData ? (
+        <>
           {clickInfo && <Info setClickInfo={setClickInfo} />}
-        <div className="hero">
-         <img src={Interstellar} alt="background" 
-          className='background-image'
-         />
-         <div className="container">
-          <div className="logo">
-            <p>Interstellar</p>
+
+          <Search data={data} />
+        </>
+      ) : (
+        <>
+          {clickInfo && <Info setClickInfo={setClickInfo} />}
+          <div className="hero">
+            <img
+              src={Interstellar}
+              alt="background"
+              className="background-image"
+              onLoad={handleImageLoad}
+            />
+            <div className="container">
+              <div className="logo">
+                <p>Interstellar</p>
+              </div>
+              <div className="buttons flex">
+                <button
+                  className="flex j-center a-center"
+                  onClick={() => afterSun()}
+                >
+                  <FaPlay />
+                  Play
+                </button>
+                <button
+                  className="flex j-center a-center"
+                  onClick={() => getInfo()}
+                >
+                  <AiOutlineInfoCircle />
+                  More Info
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="buttons flex">
-            <button className='flex j-center a-center' onClick={()=>afterSun()}><FaPlay/>Play</button> 
-            <button className='flex j-center a-center'
-            onClick={()=>getInfo()}
-            ><AiOutlineInfoCircle/>More Info</button> 
-          </div>
-         </div>
-        </div>
-        <Slider movies={movies}/> 
-        </>) 
-
-
-
-
-         }
-      
-      
-      
+          <Slider movies={movies} />
+        </>
+      )}
     </Container>
-  )
+  );
 }
 
-
-const Container=styled.div`
+const Container = styled.div`
    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap');
    z-index:7;  
    background-color:black;
@@ -159,7 +172,6 @@ const Container=styled.div`
      
     }
     img{
-      ${'' /* height:100vw; */}
       width:100%;
       height:100%;
       min-height:350px;
@@ -173,7 +185,7 @@ const Container=styled.div`
       .logo{
         margin-left:3rem;
         p{
-          font-size: ${props => props.fontSize * 130}px;
+          font-size: ${(props) => props.fontSize * 130}px;
           transition: font-size 1s ease-in-out;
           font-family: 'Cormorant Garamond', serif;
           
@@ -231,7 +243,7 @@ const Container=styled.div`
         top:9rem;
         .logo{
         p{
-          font-size: ${props => props.fontSize * 100}px;
+          font-size: ${(props) => props.fontSize * 100}px;
         }
       }
       .buttons{
@@ -258,7 +270,7 @@ const Container=styled.div`
         top:6rem;
         .logo{
           p{
-          font-size: ${props => props.fontSize * 75}px;
+          font-size: ${(props) => props.fontSize * 75}px;
         }
       }
       .buttons{
@@ -289,7 +301,7 @@ const Container=styled.div`
         .logo{
           margin-left:2rem;
           p{
-          font-size: ${props => props.fontSize * 65}px;
+          font-size: ${(props) => props.fontSize * 65}px;
         }
       }
       .buttons{
@@ -300,4 +312,4 @@ const Container=styled.div`
   }
 
 
-`
+`;

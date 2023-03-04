@@ -8,6 +8,7 @@ const initialState={
     genresLoaded:false,
     genres:[],
     tvGenres:[],
+    tvGenresLoaded:false,
     trailer:"",
     search:[],
     homeInfo:[]
@@ -170,7 +171,7 @@ const NetflixSlice=createSlice({
 
         builder.addCase(getTvGenres.fulfilled,(state,action)=>{
             state.tvGenres=action.payload;
-            state.genresLoaded=true;
+            state.tvGenresLoaded=true;
             
         });
 

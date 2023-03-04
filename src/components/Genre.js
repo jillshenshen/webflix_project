@@ -4,38 +4,41 @@ import styled from 'styled-components'
 import { RiArrowDropDownFill} from 'react-icons/ri'
 import { fetchDataByGenre } from '../store'
 
-export default function Genre({genres,type,setSelectList,setSelectTv,setLoading,setTvLoading}) {
-const [showTypeList, setShowTypeList] = useState(false);
-const typeListRef = useRef(null);
-const dispatch=useDispatch();
 
+export default function Genre({
+  genres,
+  type,
+  setSelectList,
+  setSelectTv,
+  setLoading,
+  setTvLoading,
+}) {
+  const [showTypeList, setShowTypeList] = useState(false);
+  const typeListRef = useRef(null);
+  const dispatch = useDispatch();
 
+  const handleClick = (e) => {
+    dispatch(fetchDataByGenre({ genre: e.target.value, type }));
 
-const handleClick = (e) => {
-  dispatch(fetchDataByGenre({genre:e.target.value,type}));
-  
-    if(type==="movie"){
-      setSelectList(e.target.textContent)
-      setLoading(true)
+    if (type === "movie") {
+      setSelectList(e.target.textContent);
+      setLoading(true);
       setTimeout(() => {
         setLoading(false);
       }, 2000);
     }
-    if(type==="tv"){
-      setSelectTv(e.target.textContent)
-      setTvLoading(true)
+    if (type === "tv") {
+      setSelectTv(e.target.textContent);
+      setTvLoading(true);
       setTimeout(() => {
         setTvLoading(false);
       }, 2000);
     }
-  
-  }
+  };
 
-function toggleTypeList() {
+  function toggleTypeList() {
     setShowTypeList(!showTypeList);
-    
-  } 
-
+  }
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -47,43 +50,36 @@ function toggleTypeList() {
       setShowTypeList(false);
     }
 
-    window.addEventListener('click', handleClickOutside);
+    window.addEventListener("click", handleClickOutside);
     return () => {
-      window.removeEventListener('click', handleClickOutside);
+      window.removeEventListener("click", handleClickOutside);
     };
-  }, [typeListRef]);  
-
-
+  }, [typeListRef]);
 
   return (
     <Container>
-        <div className="label"  
-        ref={typeListRef}>
-            <button className='type-btn'
-            onClick={toggleTypeList}
-    
-            >Genres            
-
-            <RiArrowDropDownFill/>
-            </button>
-            <div 
-            className={`type-list ${showTypeList ? 'visible' : ''}`}>
-            {genres.map((genre)=>{
-              return(
-            <div>
-            <li key={genre.id} value={genre.id} onClick={(e) => handleClick(e)} >{genre.name}
-            </li>
-            </div>
-          
-        )
-      })}
-            </div>
+      <div className="label" ref={typeListRef}>
+        <button className="type-btn" onClick={toggleTypeList}>
+          Genres
+          <RiArrowDropDownFill />
+        </button>
+        <div className={`type-list ${showTypeList ? "visible" : ""}`}>
+          {genres.map((genre) => {
+            return (
+              <div key={genre.id}>
+                <li value={genre.id} onClick={(e) => handleClick(e)}>
+                  {genre.name}
+                </li>
+              </div>
+            );
+          })}
         </div>
+      </div>
     </Container>
-  )
+  );
 }
 
-const Container=styled.div`
+const Container = styled.div`
   
   margin-left:2rem;
   margin-top:0.5rem;
@@ -139,4 +135,5 @@ const Container=styled.div`
     margin-left:0;
    }
 
-`
+`;
+

@@ -10,55 +10,86 @@ import { Link } from 'react-router-dom';
 import 'firebase/compat/auth'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
-import { getSearch } from '../store/index.js'
+import { getSearch,fetchMovies} from '../store/index.js'
 
 
-export default function Navbar({isScrolled,setData,setIsData,data,setClickHome,setSelectList,setSelectTv}) {
-  const dispatch=useDispatch();
-  const navigate= useNavigate()
-  const links=[
-    {name:"Home",link:"/"},
-    {name:"TV Shows",link:"/tv"},
-    {name:"Movies",link:"/movies"},
-    {name:"My list",link:"/mylist"}
-  ]
 
-  app.auth().onAuthStateChanged(function(user) {
-    //這裡會印出User的資訊
+// debounce hook
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
- 
-    if (!user) {
-       navigate("/login")
-      // User is signed in.
-    }})
-   
-  const [showSearch,setShowSearch]=useState(false) 
-  const [inputHover,setInputHover]=useState(false) 
-  const [showMenu,setShowMenu]=useState(false)
-  const [menuHover,setMenuHover]=useState(false)
-  const inputRef = useRef(null);
-  
   useEffect(() => {
-    if(showSearch){
+    const timeoutId = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+export default function Navbar({
+  isScrolled,
+  setData,
+  setIsData,
+  data,
+  setSelectList,
+  setSelectTv,
+  showSearch,
+  setShowSearch,
+}) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const links = [
+    { name: "Home", link: "/" },
+    { name: "TV Shows", link: "/tv" },
+    { name: "Movies", link: "/movies" },
+    { name: "My list", link: "/mylist" },
+  ];
+
+  // 會員驗證
+  app.auth().onAuthStateChanged(function (user) {
+    if (!user) {
+      navigate("/login");
+  
+    }
+  });
+
+  const [inputHover, setInputHover] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuHover, setMenuHover] = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (showSearch) {
       setTimeout(() => {
         inputRef.current.focus();
-      }, 500)
+      }, 500);
     }
   }, [showSearch]);
 
- 
+  const clickLogo = () => {
+    navigate("/");
+    setIsData(false);
+    setShowSearch(false);
+    setData("");
+    dispatch(getSearch("%$#"));
+    window.scrollTo({
+      top: 0,
+      behavior: "auto",
+    });
+  };
   const handleClick = (name) => {
-    if(name==="Home"){
-       setClickHome(true)
-    }else{
-      setClickHome(false)
-    }  
-
-    if(name==="Movies"){
-      setSelectList("")
+    if (name === "Movies") {
+      setSelectList("");
+      dispatch(fetchMovies({ type: "movie" }));
     }
-    if(name==="TV Shows"){
-      setSelectTv("")
+    if (name === "TV Shows") {
+      setSelectTv("");
+      dispatch(fetchMovies({ type: "tv" }));
     }
     setIsData(false);
     setShowSearch(false);
@@ -66,120 +97,141 @@ export default function Navbar({isScrolled,setData,setIsData,data,setClickHome,s
     dispatch(getSearch("%$#"));
     window.scrollTo({
       top: 0,
-      behavior: 'auto',   
+      behavior: "auto",
     });
   };
 
-  const handleClose=()=>{
-   
+  const handleClose = () => {
     setShowSearch(false);
     setInputHover(false);
-    setData("")
+    setData("");
     dispatch(getSearch("%$#"));
-  }
+  };
 
-  const handleMenu=()=>{
-    setTimeout(()=>{
-      setShowMenu(false)
-    },500)
-    
-  }
+  const handleMenu = () => {
+    setTimeout(() => {
+      setShowMenu(false);
+    }, 500);
+  };
 
-
-  
+  // 設定延遲時間
+  const debouncedData = useDebounce(data, 700);
+  useEffect(() => {
+    if (debouncedData) {
+      dispatch(getSearch(debouncedData));
+    }
+  }, [debouncedData]);
 
   return (
     <Container>
-        <nav className={`flex ${isScrolled? "scrolled":""}`}>
-           <div className="left flex a-center">
-              <div className="brand flex a-center j-center">
-                 <img src={logo} alt="logo"   className="logo-img"/>
-              </div>
-              <li 
-              onMouseEnter={()=>setShowMenu(true)}
-              onMouseLeave={()=>handleMenu()}
-              className='menu'>Menu<VscTriangleDown/></li>
-              <ul className='links flex'>
-             
-             {links.map(({name,link})=>{
-                return(
-                  <li key={name}><Link to={link}  onClick={e => {  
-                  
-                    handleClick(name) }}>{name}</Link></li>
-                )
-
-             })}
-
-             </ul>
-           </div>
-           <div className="right flex a-center">
-               <div className={`search ${showSearch?"show-search":""}`}>
-                 <button
-                  onFocus={()=>setShowSearch(true)}
-                  onBlur={()=>{
-                    if(!inputHover){setShowSearch(false)}
-                  }}
-             
-                 >
-                    <FaSearch/>
-                 </button>
-
-                 <input type="text" placeholder='search' 
-                  value={data} 
-                  ref={inputRef}
-                  onMouseEnter={()=>setInputHover(true)}
-                  onBlur={
-                    ()=>{
-                      if(data===''){
-                        setShowSearch(false);
-                        setInputHover(false);
-
-                      }
-                     
+      <nav className={`flex ${isScrolled ? "scrolled" : ""}`}>
+        <div className="left flex a-center">
+          <div className="brand flex a-center j-center">
+            <img
+              src={logo}
+              alt="logo"
+              className="logo-img"
+              onClick={() => {
+                clickLogo();
+              }}
+            />
+          </div>
+          <li
+            onMouseEnter={() => setShowMenu(true)}
+            onMouseLeave={() => handleMenu()}
+            className="menu"
+          >
+            Menu
+            <VscTriangleDown />
+          </li>
+          <ul className="links flex">
+            {links.map(({ name, link }) => {
+              return (
+                <li key={name}>
+                  <Link
+                    to={link}
+                    onClick={(e) => {
+                      handleClick(name);
                     }}
+                  >
+                    {name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="right flex a-center">
+          <div className={`search ${showSearch ? "show-search" : ""}`}>
+            <button
+              onFocus={() => setShowSearch(true)}
+              onBlur={() => {
+                if (!inputHover) {
+                  setShowSearch(false);
+                }
+              }}
+            >
+              <FaSearch />
+            </button>
 
-                    onChange={(event) => {
-                    setData(event.target.value);
-                    }}   
-                 
-                 />
-                 <button className={`close ${data!=""?"show-close":""}`} 
-                 onClick={()=>{
-                  handleClose()
-                 }}
-                 >
-                 <AiOutlineClose/>
-                 </button>
-              
-               </div>
-               <button onClick={()=>app.auth().signOut()}><FaPowerOff/></button>
-           </div>  
-           <div className={showMenu || menuHover?'menu-div':'menu-div menu-none'}
-             onMouseEnter={()=>setMenuHover(true)}
-              onMouseLeave={()=>setMenuHover(false)}
-           >
-           <VscTriangleUp/>
-            <ul className='menu-ul'>
-               
-             {links.map(({name,link})=>{
-                return(
-                  <li key={name} ><Link to={link}  onClick={e => {  
-                  
-                  handleClick(name) }}>{name}</Link></li>
-                )
-
-             })}
-            </ul>
-           </div>
-   
-        </nav>
+            <input
+              type="text"
+              placeholder="search"
+              value={data}
+              ref={inputRef}
+              onMouseEnter={() => setInputHover(true)}
+              onBlur={() => {
+                if (data === "") {
+                  setShowSearch(false);
+                  setInputHover(false);
+                }
+              }}
+              onChange={(event) => {
+                setData(event.target.value);
+              }}
+            />
+            <button
+              className={`close ${data != "" ? "show-close" : ""}`}
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              <AiOutlineClose />
+            </button>
+          </div>
+          <button onClick={() => app.auth().signOut()}>
+            <FaPowerOff />
+          </button>
+        </div>
+        <div
+          className={showMenu || menuHover ? "menu-div" : "menu-div menu-none"}
+          onMouseEnter={() => setMenuHover(true)}
+          onMouseLeave={() => setMenuHover(false)}
+        >
+          <VscTriangleUp />
+          <ul className="menu-ul">
+            {links.map(({ name, link }) => {
+              return (
+                <li key={name}>
+                  <Link
+                    to={link}
+                    onClick={(e) => {
+                      handleClick(name);
+                    }}
+                  >
+                    {name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </nav>
     </Container>
-  )
+  );
 }
 
-
-
-const Container=styled.div`
+const Container = styled.div`
   position:relative;
   
   .scrolled{
@@ -202,7 +254,7 @@ const Container=styled.div`
       gap:2rem;
      
       .brand{
-       
+        cursor:pointer;
         img{
          width:10rem;
          
@@ -392,4 +444,5 @@ const Container=styled.div`
   }
   
 
-`
+`;
+
