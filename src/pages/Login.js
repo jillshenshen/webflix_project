@@ -1,4 +1,4 @@
-import React, { useState,useContext } from 'react'
+import React, { useState,useContext,useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Background from '../components/Background.js'
@@ -7,6 +7,7 @@ import { app } from '../utils/firebase-config.js'
 import 'firebase/compat/auth'
 import { AppContext } from "../App.js";
 import mini from '../assets/mini.gif'
+import {AiFillEye,AiFillEyeInvisible} from 'react-icons/ai'
 
 
 
@@ -20,6 +21,8 @@ export default function Login() {
   });
   const [logSuccess, setLogSuccess] = useState(false);
   const { setEmail } = useContext(AppContext);
+  const [showPassword, setShowPassword] = useState(false);
+  const inputRef = useRef(null);
 
   const handleLogIn = async () => {
     setLogSuccess(true);
@@ -51,13 +54,23 @@ export default function Login() {
   };
 
   app.auth().onAuthStateChanged(function (user) {
-    //這裡會印出User的資訊
     if (user) {
       setEmail(user.email);
       navigate("/");
-      // User is signed in.
     }
   });
+
+  const handleTogglePassword = () => {
+    inputRef.current.focus();
+    setShowPassword((prev) => !prev);
+    
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleLogIn();
+    }
+  };
 
   return (
     <Container>
@@ -82,19 +95,29 @@ export default function Login() {
                     [e.target.name]: e.target.value,
                   })
                 }
+                onKeyPress={handleKeyPress}
               />
+              <div className="pass-div"  >
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 name="password"
                 value={formValue.password}
+                ref={inputRef}
                 onChange={(e) =>
                   setFormValue({
                     ...formValue,
                     [e.target.name]: e.target.value,
                   })
                 }
+                onKeyPress={handleKeyPress}
               />
+              <div className="icon" onClick={handleTogglePassword}>
+                {showPassword?<AiFillEyeInvisible/>:<AiFillEye/>}
+              </div>
+
+              </div>
+             
               {error ? (
                 <p className="error">
                   <span> {errorMsg}</span>
@@ -149,7 +172,7 @@ position:relative;
         width:320px;
         background-color:#000000b0;
         gap:2rem;
-        color:white;
+     
     
 
         .error{
@@ -164,9 +187,48 @@ position:relative;
         .container{
             gap:2rem;
             input{
-                padding:0.5rem 1rem;
+                color:white;
+                caret-color: white;
+                padding:0.7rem 1rem;
                 width:15rem;
+                background-color:#333333 !important;
+                border: none;
+                border-radius:0.2rem;
             }
+
+            input:focus {
+              outline:none;
+              border: 1px solid #e87c03;
+              background-color: #424242 !important;
+            }
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus,
+            input:-webkit-autofill:active {
+              -webkit-box-shadow: none;
+                      box-shadow: none;
+              color: inherit !important;
+              background-color: transparent !important;
+              transition: background-color 5000s ease-in-out 0s;
+            }
+
+            input:-webkit-autofill{
+                -webkit-text-fill-color: white !important;
+            }
+            .pass-div{
+              position:relative;
+              .icon{
+                cursor:pointer;
+                font-weight:400; 
+                color:#808080;
+                position:absolute;
+                top: 50%;
+                right: 1rem;
+                transform: translateY(-50%);
+              }
+            }
+           
+
             button{
                 padding:0.7rem 1rem;
                 background-color:#e50914;

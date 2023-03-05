@@ -18,9 +18,6 @@ import Info from '../components/Info.js'
 import { homeInfo} from '../store/index.js'
 import Loading from '../components/Loading.js'
 
-
-
-
 export default function Movies() {
   const {
     data,
@@ -145,7 +142,7 @@ export default function Movies() {
         <>
           {clickInfo && <Info setClickInfo={setClickInfo} />}
 
-          <Search data={data} />
+          <Search/>
         </>
       ) : selectTv != "" ? (
         tvLoading ? (

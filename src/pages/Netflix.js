@@ -118,7 +118,7 @@ export default function Netflix() {
         <>
           {clickInfo && <Info setClickInfo={setClickInfo} />}
 
-          <Search data={data} />
+          <Search/>
         </>
       ) : (
         <>

@@ -8,36 +8,53 @@ import List from "./pages/List"
 import Movies from "./pages/Movies";
 import Tv from "./pages/Tv";
 
-
 export const AppContext = createContext();
 
 function App() {
-  const [isScrolled,setIsScrolled]=useState(false)
+  const [isScrolled, setIsScrolled] = useState(false);
   const [data, setData] = useState("");
-  const [isData,setIsData]=useState(false)
-  const [email,setEmail]=useState("")
-  const [clickInfo,setClickInfo]=useState(false);
-  const [showSearch,setShowSearch]=useState(false)
-  const [clickBack,setClickBack]=useState(false)
-  const [showLogo,setShowLogo]=useState(false)
+  const [isData, setIsData] = useState(false);
+  const [email, setEmail] = useState("");
+  const [clickInfo, setClickInfo] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [clickBack, setClickBack] = useState(false);
+  const [showLogo, setShowLogo] = useState(false);
 
-    return (
-     
-      <div>
-       <AppContext.Provider value={{ data, setData, isData, setIsData,isScrolled,setIsScrolled,email,setEmail,clickInfo,setClickInfo,showSearch,setShowSearch,clickBack,setClickBack,showLogo,setShowLogo}}>
-       <Routes>
-        <Route exact path="/login" element={<Login/>} />     
-        <Route exact path="/signup" element={<Signup/>}/> 
-        <Route exact path="/player" element={<Player/>}/> 
-        <Route exact path="/" element={<Netflix/>}/>  
-        <Route exact path="/myList" element={<List/>}/>   
-        <Route exact path="/tv" element={<Tv/>}/>
-        <Route exact path="/movies" element={<Movies/>}/> 
-       </Routes>
-       </AppContext.Provider>  
-      </div>
-    
-    );
-  }
-  
+  return (
+    <div>
+      <AppContext.Provider
+        value={{
+          data,
+          setData,
+          isData,
+          setIsData,
+          isScrolled,
+          setIsScrolled,
+          email,
+          setEmail,
+          clickInfo,
+          setClickInfo,
+          showSearch,
+          setShowSearch,
+          clickBack,
+          setClickBack,
+          showLogo,
+          setShowLogo,
+        }}
+      >
+        <Routes>
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/signup" element={<Signup />} />
+          <Route exact path="/player" element={<Player />} />
+          <Route exact path="/" element={<Netflix />} />
+          <Route exact path="/myList" element={<List />} />
+          <Route exact path="/tv" element={<Tv />} />
+          <Route exact path="/movies" element={<Movies />} />
+        </Routes>
+      </AppContext.Provider>
+    </div>
+  );
+}
+
 export default App;
+

@@ -50,7 +50,7 @@ export default function Navbar({
     { name: "My list", link: "/mylist" },
   ];
 
-  // 會員驗證
+  
   app.auth().onAuthStateChanged(function (user) {
     if (!user) {
       navigate("/login");

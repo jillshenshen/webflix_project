@@ -11,10 +11,6 @@ import ListItem from '../components/ListItem'
 import Drag from '../components/Drag'
 import Info from '../components/Info.js'
 
-
-
-
-
 export default function List() {
   const {
     data,
@@ -40,7 +36,7 @@ export default function List() {
   const [clickDrag, setClickDrag] = useState(false);
 
   app.auth().onAuthStateChanged(function (user) {
-    //這裡會印出User的資訊
+   
     if (user) {
       setEmail(user.email);
     }
@@ -100,7 +96,7 @@ export default function List() {
         <>
           {clickInfo && <Info setClickInfo={setClickInfo} />}
 
-          <Search data={data} />
+          <Search/>
         </>
       ) : (
         <>

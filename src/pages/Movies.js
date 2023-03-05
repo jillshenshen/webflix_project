@@ -10,14 +10,13 @@ import { fetchMovies, getGenres} from '../store/index.js'
 import { getTrailer} from '../store/index.js'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
-
 import { FaPlay } from 'react-icons/fa'
 import {AiOutlineInfoCircle} from  'react-icons/ai'
 import Genre from '../components/Genre.js';
 import Info from '../components/Info.js'
 import { homeInfo} from '../store/index.js'
 import Loading from '../components/Loading.js'
-import BackImg from '../components/BackImg.js'
+
 
 
 
@@ -141,7 +140,7 @@ export default function Movies() {
         <>
           {clickInfo && <Info setClickInfo={setClickInfo} />}
 
-          <Search data={data} />
+          <Search/>
         </>
       ) : selectList != "" ? (
         loading ? (

@@ -16,7 +16,7 @@ export default function Info({ setClickInfo }) {
     return () => clearTimeout(timer);
   }, []);
 
-  // click homepage
+
   const handleClick = (i) => {
     window.open(i.homepage, "_blank");
   };
@@ -146,7 +146,8 @@ const Container = styled.div`
 
     .img-div{
         width:100%;
-        border-radius:0.3rem;
+        border-top-right-radius: 0.3rem;
+        border-top-left-radius: 0.3rem;
         position:relative;
 
       
@@ -154,7 +155,8 @@ const Container = styled.div`
             width:100%;
             height:100%:
             object-fit:cover;
-            border-radius:0.3rem;
+            border-top-right-radius: 0.3rem;
+            border-top-left-radius: 0.3rem;
         }
        
 
@@ -208,6 +210,12 @@ const Container = styled.div`
    
 
  }
+
+ .info-container::-webkit-scrollbar {
+  display: none;
+
+}
+
 
 
  @media (max-width: 850px) {

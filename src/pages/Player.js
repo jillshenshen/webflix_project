@@ -1,4 +1,4 @@
-import React,{useContext,useState,useEffect} from 'react'
+import React,{useContext,useState} from 'react'
 import styled from 'styled-components'
 import { BsArrowLeft } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom'
@@ -16,13 +16,15 @@ export default function Player() {
   const { data, setShowSearch, setClickBack } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
   const [showLogo, setShowLogo] = useState(false);
+  const [showIframe, setShowIframe] = useState(true);
 
-  // 影片載入完成後，隱藏 loading
+
+
+  // 影片載入完成後，隱藏loading
   function handleOnLoad() {
     setIsLoading(false); 
   }
 
-  //會員驗證
   app.auth().onAuthStateChanged(function (user) {
    
     if (!user) {
@@ -31,7 +33,9 @@ export default function Player() {
     }
   });
 
+  //返回鍵設定
   const handleBack = () => {
+    setShowIframe(false)
     // keep search bar text
     if (data) {
       setShowSearch(true);
@@ -40,15 +44,18 @@ export default function Player() {
     setClickBack(true);
     setTimeout(() => {
       window.history.back();
-    }, 1200);
+    }, 1200); 
   };
+
+
+
 
   return (
     <Container>
       {isLoading && <Loading />}
       {showLogo && <BackImg />}
-
-      <div className={`player ${!isLoading ? "show" : ""}`}>
+      {showIframe&&
+        <div className={`player ${!isLoading ? "show" : ""}`}>
         <div className="back">
           <BsArrowLeft onClick={() => handleBack()} />
         </div>
@@ -56,8 +63,12 @@ export default function Player() {
           src={`https://www.youtube.com/embed/${youtube_v}?accelerometer=1&autoplay=1&mute=1`}
           allow="accelerometer;autoplay;mute;clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           onLoad={handleOnLoad}
+     
         ></iframe>
       </div>
+      
+      }
+    
     </Container>
   );
 }
@@ -78,13 +89,14 @@ const Container = styled.div`
             font-size:2.5rem;
             cursor:pointer;
         }
-    }
+     }
    
    }
    .player.show {
       opacity: 1; 
       visibility:visible; 
    }
+ 
    video,iframe{
     width: 100%;
     height: 100%;

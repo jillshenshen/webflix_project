@@ -6,7 +6,7 @@ import SearchItem from './SearchItem.js'
 
 
 
-export default function Search({ data }) {
+export default function Search() {
   const searchArray = useSelector((state) => state.netflix.search);
 
   return (

@@ -53,12 +53,16 @@ export default function Signup() {
    };
  
    app.auth().onAuthStateChanged(function (user) {
-  
      if (user) {
-       navigate("/");
-    
+       navigate("/"); 
      }
    });
+
+   const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSignIn();
+    }
+   };
  
    return (
      <Container showPassword={showPassword}>
@@ -83,6 +87,7 @@ export default function Signup() {
                onChange={(e) =>
                  setFormValue({ ...formValue, [e.target.name]: e.target.value })
                }
+               onKeyPress={handleKeyPress}
              />
              {showPassword && (
                <input
@@ -96,6 +101,7 @@ export default function Signup() {
                      [e.target.name]: e.target.value,
                    })
                  }
+                 onKeyPress={handleKeyPress}
                />
              )}
  
