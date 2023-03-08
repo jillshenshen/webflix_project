@@ -35,8 +35,7 @@ export default function List() {
   const timeoutRef = useRef(null);
   const [clickDrag, setClickDrag] = useState(false);
 
-  app.auth().onAuthStateChanged(function (user) {
-   
+  app.auth().onAuthStateChanged(function (user) { 
     if (user) {
       setEmail(user.email);
     }

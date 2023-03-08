@@ -63,7 +63,10 @@ export default function Card({ movieData }) {
   }, [isHovered]);
 
   app.auth().onAuthStateChanged(function (user) {
-    setEmail(user.email);
+    if(user){
+      setEmail(user.email);
+    }
+   
   });
 
   const saveShow = async () => {
