@@ -24,3 +24,26 @@ password: 123456
 - Use Styled-components for styling.  
 - Use HTML Drag and Drop API to implement drag and drop functionality.  
 - Use Firebase for database, membership, deploy.  
+
+
+## Introduction to website features
+**Homepage browsing**  
+- Hover over each card to display the trailer, click on the info icon to view more information, and click on the play icon to enlarge the video for viewing.
+
+
+![Alt Text](https://github.com/jillshenshen/webflix_project/blob/main/src/assets/webflix.gif)
+
+**Browsing by genres** 
+- Filter the displayed data by genres in the TV page and Movies page.  
+
+![Alt Text](https://github.com/jillshenshen/webflix_project/blob/main/src/assets/genres.gif)
+
+**Search bar dispaly** 
+-  Search for any movie or TV show of interest by entering keywords in all pages.  
+-  Use debounce in the search bar to reduce unnecessary requests. 
+
+![Alt Text](https://github.com/jillshenshen/webflix_project/blob/main/src/assets/search.gif)
+
+
+
+
