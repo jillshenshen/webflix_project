@@ -45,5 +45,20 @@ password: 123456
 ![Alt Text](https://github.com/jillshenshen/webflix_project/blob/main/src/assets/search.gif)
 
 
+**Netflix video carousel**  
+- Responsive video carousel designed to mimic the Netflix interface.
+
+![Alt Text](https://github.com/jillshenshen/webflix_project/blob/main/src/assets/slider.gif)
+
+**My list page**  
+- Add the item to my list and remove it.
+
+![Alt Text](https://github.com/jillshenshen/webflix_project/blob/main/src/assets/list.gif)
+
+**Drag and drop functionality**  
+- Use drag and drop functionality to record the video watching status.
+
+![Alt Text](https://github.com/jillshenshen/webflix_project/blob/main/src/assets/drag.gif)
+
 
 
