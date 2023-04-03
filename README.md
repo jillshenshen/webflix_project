@@ -1,5 +1,6 @@
 # Webflix - Movie trailer search platform
 
+
 This project is built as a movie and TV show information platform website, using the movie database TMDb as the data source, and this
 is designed with reference to the video streaming platform Netflix, and its main features are as follows:
 
@@ -7,7 +8,7 @@ is designed with reference to the video streaming platform Netflix, and its main
 - Browse trailers and related information for currently popular movies and TV shows.
 - Browse movies and TV shows by genres and search bar.
 - Record viewing progress by using a drag and drop interface.
-
+![webflix](https://github.com/jillshenshen/webflix_project/blob/main/src/assets/webflixpng.png)
 
 ## DEMO
 website: https://webflix-project.web.app/  
